@@ -27,27 +27,43 @@ class CustomButton extends StatelessWidget {
   }
 }
 
+// 返回每个隐藏的菜单项
+SelectView(IconData icon, String text, String id) {
+  return new PopupMenuItem<String>(
+      value: id,
+      child: new Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          new Icon(icon, color: Colors.blue),
+          new Text(text),
+        ],
+      )
+  );
+}
 class _MyHomePageState extends State<MyHomePage> {
   double _total = 0;
-  int _count=0;
+  int _count = 0;
   void _calcTotal() {
     setState(() {
-      if(foodListView.order.value.length>0) {
-        _total = foodListView.order.value.map((e) => e['price'] * e['count'])
+      if (foodListView.order.value.length > 0) {
+        _total = foodListView.order.value
+            .map((e) => e['price'] * e['count'])
             .toList()
             .reduce((a, b) => a + b);
-        _count = foodListView.order.value.map((e) =>  e['count'])
+        _count = foodListView.order.value
+            .map((e) => e['count'])
             .toList()
             .reduce((a, b) => a + b);
       }
     });
   }
-  void _settle(){
+
+  void _settle() {
     print("settele ${foodListView.order}");
     setState(() {
       _total = 0;
-      _count=0;
-      foodListView.order.value.forEach((e) => {e['count']=0});
+      _count = 0;
+      foodListView.order.value.forEach((e) => {e['count'] = 0});
       catValueNotifierData.notifyListeners();
       // foodListView = FoodListView(catValueNotifierData, orderValueNotifierData);
     });
@@ -58,13 +74,27 @@ class _MyHomePageState extends State<MyHomePage> {
   CatValueNotifierData catValueNotifierData = CatValueNotifierData(1);
   OrderValueNotifierData orderValueNotifierData = OrderValueNotifierData([]);
 
-  FoodListView foodListView =null;
-  CategoryListView categoryListView=null;
+  FoodListView foodListView = null;
+  CategoryListView categoryListView = null;
 
   @override
   void initState() {
     // catValueNotifierData.notifyListeners();
     super.initState();
+  }
+
+  // 返回每个隐藏的菜单项
+  SelectView(IconData icon, String text, String id) {
+    return new PopupMenuItem<String>(
+        value: id,
+        child: new Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            new Icon(icon, color: Colors.blue),
+            new Text(text),
+          ],
+        )
+    );
   }
 
   @override
@@ -73,16 +103,51 @@ class _MyHomePageState extends State<MyHomePage> {
     orderValueNotifierData.addListener(() {
       _calcTotal();
     });
-    if(foodListView==null) {
+    if (foodListView == null) {
       foodListView = FoodListView(catValueNotifierData, orderValueNotifierData);
     }
-    if(categoryListView==null){
-      categoryListView=CategoryListView(catValueNotifierData);
+    if (categoryListView == null) {
+      categoryListView = CategoryListView(catValueNotifierData);
     }
     ThemeData themeData = Theme.of(context);
     return Scaffold(
         appBar: AppBar(
           title: Text(widget.title),
+          // leading: Builder(
+          //   builder: (BuildContext context) {
+          //     return IconButton(
+          //       icon: const Icon(Icons.settings),
+          //       onPressed: () {
+          //         Scaffold.of(context).openDrawer();
+          //       },
+          //       tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+          //     );
+          //   },
+          // ),
+          actions: <Widget>[
+            //导航栏右侧菜单
+            // IconButton(icon: Icon(Icons.settings), onPressed: () {}),
+            // 隐藏的菜单
+            new PopupMenuButton<String>(
+              itemBuilder: (BuildContext context) => <PopupMenuItem<String>>[
+                this.SelectView(Icons.settings, '打印设置', 'print'),
+                this.SelectView(Icons.category, '添加分类', 'cat'),
+                this.SelectView(Icons.menu_book, '设置菜名', 'menu'),
+              ],
+              onSelected: (String action) {
+                // 点击选项的时候
+                switch (action) {
+                  case 'print':
+                    break;
+                  case 'cat':
+
+                    break;
+                  case 'menu': break;
+                }
+              },
+            ),
+
+          ],
         ),
         body: Container(
           child: Row(
@@ -104,14 +169,16 @@ class _MyHomePageState extends State<MyHomePage> {
         floatingActionButton: Container(
           color: Colors.black54,
           // decoration: ,
-          margin: EdgeInsets.only(left: 0,right: 0,bottom: 0),
+          margin: EdgeInsets.only(left: 0, right: 0, bottom: 0),
           child: Flex(
             direction: Axis.horizontal,
             // crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Expanded(
                 flex: 1,
-                child: Text('       合计：$_count 件', style: TextStyle(fontSize: 20, color: themeData.buttonColor)),
+                child: Text('       合计：$_count 件',
+                    style:
+                        TextStyle(fontSize: 20, color: themeData.buttonColor)),
               ),
               Expanded(
                   flex: 0,

@@ -1,0 +1,67 @@
+<resources>
+    <string name="app_name">PrintDemo </string>
+
+    <string-array name="port">
+        <item>NET</item>
+        <item>BT</item>
+        <item>USB</item>
+    </string-array>
+
+
+    <string name="connect">Connect </string>
+    <string name="discon">disConnect</string>
+    <string name="hint">Please input IP</string>
+    <string name="contextandcode">print context,lineAndBarCode</string>
+    <string name="read">Read Buffer</string>
+    <string name="image">Print Image</string>
+    <string name="image1">Print Raste Image</string>
+    <string name="text">Print text and cutpaper</string>
+    <string name="barcode">Print barCode</string>
+    <string name="bleselect">Please select BLE dev</string>
+    <string name="usbselect">Please select USB dev</string>
+    <string name="toast_discon_success">Disconnect success</string>
+    <string name="toast_discon_faile">Disconnect success</string>
+    <string name="toast_present_con">there is no connection</string>
+    <string name="send_success">Send Success</string>
+    <string name="send_failed">Send Failed</string>
+    <string name="not_con_printer">there is no connection</string>
+    <string name="usb_pre_con">present connected Usb dev:</string>
+    <string name="con_success">Connect success</string>
+    <string name="con_failed">Connect failed</string>
+    <string name="con_has_discon">connection has disconnected</string>
+    <string name="sb">Select</string>
+    <string name="start_pos_activity">Start PosPrint</string>
+    <string name="start_76_activity">Start 76 PosPrint</string>
+    <string name="start_tsc_activity">Start TSC PosPrint</string>
+    <string name="qrcode">Print QRcode</string>
+    <string name="none_ble_device">no devices are found</string>
+    <string name="none_ipaddress">pleesa input the ipaddress first!</string>
+    <string name="connect_first">please connet the printer first!</string>
+    <string name="this_is_text">This is Text!</string>
+    <string name="text_for">text for!</string>
+    <string name="error_level">error_level</string>
+    <string name="qrcode_content">input content，create QRCode</string>
+    <string name="qrcode_clear">clear</string>
+    <string name="qrcode_creat">creat</string>
+    <string name="qrcode_print">print</string>
+    <string name="qrcode_scan">scan</string>
+    <string name="none_content">please input content first！</string>
+    <string name="check_linke">checkLink</string>
+    <string name="net_connet_loss">network connect loss,please go back and connet the printer again</string>
+    <string name="l58">58</string>
+    <string name="l80">80</string>
+    <string name="barcodePrinter">barcode printer</string>
+    <string name="teminal">Ternimal Printer</string>
+    <string name="barcode_printer">Barcode Printer</string>
+    <string name="no_device">no available  usb device</string>
+    <string name="please_device">please select device</string>
+    <string name="sample">sample</string>
+    <string name="print_text">print text</string>
+    <string name="print_barcode">print barcode</string>
+    <string name="print_qrcode">print qrcode</string>
+    <string name="print_bitmap">print bitmap</string>
+    <string name="printer_76">76 printer</string>
+    <string name="other_printer"> other printer</string>
+    <string name="printer_58IId">58IID </string>
+
+</resources>
