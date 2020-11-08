@@ -44,6 +44,15 @@ class _MyHomePageState extends State<MyHomePage> {
   }
   void _settle(){
     print("settele ${foodListView.order}");
+    setState(() {
+      _total = 0;
+      _count=0;
+      foodListView.order.value.forEach((e) => {e['count']=0});
+      catValueNotifierData.notifyListeners();
+      // foodListView = FoodListView(catValueNotifierData, orderValueNotifierData);
+    });
+    // foodListView.order.notifyListeners();
+    // catValueNotifierData.notifyListeners();
   }
 
   CatValueNotifierData catValueNotifierData = CatValueNotifierData(1);

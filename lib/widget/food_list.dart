@@ -59,7 +59,7 @@ class _FoodListViewState extends State<FoodListView> {
   @override
   Widget build(BuildContext context) {
     widget.cat.addListener(_handleValueChanged);
-
+    print("_FoodListViewState build");
     return ListView(
       shrinkWrap: true,
       scrollDirection: Axis.vertical,
@@ -68,6 +68,7 @@ class _FoodListViewState extends State<FoodListView> {
   }
 
   _handleValueChanged() {
+    print("_FoodListViewState _handleValueChanged ${widget.cat.value}");
     setState(() {
       widget.foods=widget.getFoodList(widget.cat.value);
     });
