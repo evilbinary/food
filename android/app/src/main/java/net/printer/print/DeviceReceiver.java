@@ -8,7 +8,7 @@ import android.content.Intent;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import org.evilbinary.flutter_app2.R;
+import org.evilbinary.food.R;
 
 import java.util.ArrayList;
 

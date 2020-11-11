@@ -16,7 +16,7 @@ import net.posprinter.utils.DataForSendToPrinterPos58;
 import net.posprinter.utils.DataForSendToPrinterPos76;
 import net.posprinter.utils.StringUtils;
 
-import org.evilbinary.flutter_app2.R;
+import org.evilbinary.food.R;
 
 import java.util.ArrayList;
 import java.util.List;

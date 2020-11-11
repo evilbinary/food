@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_app2/widget/category.dart';
 import 'package:flutter_app2/widget/food_list.dart';
 import '../widget/food_item.dart';
+import 'dart:convert';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
@@ -67,8 +69,14 @@ class _MyHomePageState extends State<MyHomePage> {
       catValueNotifierData.notifyListeners();
       // foodListView = FoodListView(catValueNotifierData, orderValueNotifierData);
     });
+    _send(jsonEncode(foodListView.order.value));
     // foodListView.order.notifyListeners();
     // catValueNotifierData.notifyListeners();
+  }
+
+  void _send(val) async{
+    String reply=await basicChannel.send(val);
+    print('ret=>$reply');
   }
 
   CatValueNotifierData catValueNotifierData = CatValueNotifierData(1);
@@ -77,10 +85,14 @@ class _MyHomePageState extends State<MyHomePage> {
   FoodListView foodListView = null;
   CategoryListView categoryListView = null;
 
+  static const nativeChannel = const MethodChannel('org.evilbinary.flutter/native');
+  static const basicChannel = BasicMessageChannel<String>('org.evilbinary.flutter/message', StringCodec());
+
   @override
   void initState() {
     // catValueNotifierData.notifyListeners();
     super.initState();
+
   }
 
   // 返回每个隐藏的菜单项
@@ -96,10 +108,18 @@ class _MyHomePageState extends State<MyHomePage> {
         )
     );
   }
+  void showPrint() async{
+    var activity='net.printer.print.PrintActivity';
+    await nativeChannel.invokeMethod('startActivity', activity);
+  }
+  Future<String> onMessage(String message) {
+    print("onMessage=>$message");
+  }
 
   @override
   Widget build(BuildContext context) {
     print("_MyHomePageState build ");
+    basicChannel.setMessageHandler(onMessage);
     orderValueNotifierData.addListener(() {
       _calcTotal();
     });
@@ -138,6 +158,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 // 点击选项的时候
                 switch (action) {
                   case 'print':
+                    showPrint();
                     break;
                   case 'cat':
 
@@ -197,4 +218,6 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ));
   }
+
+
 }

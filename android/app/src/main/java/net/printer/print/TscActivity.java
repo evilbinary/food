@@ -13,7 +13,7 @@ import net.posprinter.utils.BitmapProcess;
 import net.posprinter.utils.BitmapToByteData;
 import net.posprinter.utils.DataForSendToPrinterTSC;
 
-import org.evilbinary.flutter_app2.R;
+import org.evilbinary.food.R;
 
 import java.util.ArrayList;
 import java.util.List;

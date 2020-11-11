@@ -30,7 +30,7 @@ import net.posprinter.utils.PosPrinterDev;
 import net.printer.print.ReceiptPrinter.R58Activity;
 import net.printer.print.ReceiptPrinter.R80Activity;
 
-import org.evilbinary.flutter_app2.R;
+import org.evilbinary.food.R;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -58,7 +58,7 @@ public class PrintActivity extends Activity implements View.OnClickListener{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        setTitle("打印设置");
         //bind service，get imyBinder
         Intent intent =new Intent(this, PosprinterService.class);
         bindService(intent,mSerconnection,BIND_AUTO_CREATE);
