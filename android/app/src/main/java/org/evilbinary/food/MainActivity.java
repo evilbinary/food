@@ -125,7 +125,8 @@ public class MainActivity extends FlutterActivity {
                         int count=jsonObject.getInt("count");//数量
                         JSONArray goods=jsonObject.getJSONArray("goods");
 
-//                        list.add(DataForSendToPrinterPos58.initializePrinter());
+                        list.add(DataForSendToPrinterPos58.initializePrinter());
+                        list.add(DataForSendToPrinterPos58.printAndFeedLine());
                         list.add(DataForSendToPrinterPos58.setAbsolutePrintPosition(50, 00));//设置初始位置
                         list.add(DataForSendToPrinterPos58.selectCharacterSize(17));//字体放大一倍
                         list.add(StringUtils.strTobytes(shopName));
@@ -133,31 +134,34 @@ public class MainActivity extends FlutterActivity {
 
                         list.add(DataForSendToPrinterPos58.initializePrinter());
                         list.add(DataForSendToPrinterPos58.setAbsolutePrintPosition(0, 00));
-                        list.add(StringUtils.strTobytes("---------------------------------------"));
+                        list.add(StringUtils.strTobytes("--------------------------------"));
                         list.add(DataForSendToPrinterPos58.printAndFeedLine());
 
                         list.add(DataForSendToPrinterPos58.initializePrinter());
                         for(int i=0;i<goods.length();i++){
                             JSONObject good= goods.getJSONObject(i);
                             list.add(DataForSendToPrinterPos58.initializePrinter());
-                            list.add(DataForSendToPrinterPos58.setAbsolutePrintPosition(30, 00));
+                            list.add(DataForSendToPrinterPos58.selectCharacterSize(1));
+                            list.add(DataForSendToPrinterPos58.setAbsolutePrintPosition(0, 00));
                             list.add(StringUtils.strTobytes(good.getString("title")));
-                            list.add(DataForSendToPrinterPos58.setAbsolutePrintPosition(180, 00));
-                            list.add(StringUtils.strTobytes(""+good.getInt("count")+"件"));
+                            list.add(DataForSendToPrinterPos58.setAbsolutePrintPosition(140, 00));
+                            list.add(StringUtils.strTobytes(""+good.getInt("count")+"份 "));
                             list.add(DataForSendToPrinterPos58.setAbsolutePrintPosition(220, 00));
                             list.add(StringUtils.strTobytes(good.getString("price")+"元"));
                             list.add(DataForSendToPrinterPos58.printAndFeedLine());
                         }
                         list.add(DataForSendToPrinterPos58.initializePrinter());
-                        list.add(StringUtils.strTobytes("---------------------------------------"));
+                        list.add(StringUtils.strTobytes("--------------------------------"));
                         list.add(DataForSendToPrinterPos58.printAndFeedLine());
 
                         list.add(DataForSendToPrinterPos58.initializePrinter());
                         list.add(DataForSendToPrinterPos58.selectCharacterSize(17));
-                        list.add(DataForSendToPrinterPos58.setAbsolutePrintPosition(30, 00));
-                        list.add(StringUtils.strTobytes("件数："+count+"件"));
+                        list.add(DataForSendToPrinterPos58.setAbsolutePrintPosition(0, 00));
+                        list.add(StringUtils.strTobytes(""+count+"件"));
                         list.add(DataForSendToPrinterPos58.setAbsolutePrintPosition(220, 00));
-                        list.add(StringUtils.strTobytes("总价："+total+"元"));
+                        list.add(StringUtils.strTobytes(" 总价："+total+"元"));
+                        list.add(DataForSendToPrinterPos58.printAndFeedLine());
+                        list.add(DataForSendToPrinterPos58.printAndFeedLine());
                         list.add(DataForSendToPrinterPos58.printAndFeedLine());
                         list.add(DataForSendToPrinterPos58.printAndFeedLine());
 
