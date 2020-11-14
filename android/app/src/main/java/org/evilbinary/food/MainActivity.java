@@ -31,6 +31,8 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.StringCodec;
 import io.flutter.plugins.GeneratedPluginRegistrant;
+import java.util.Date;
+import android.text.format.DateFormat;
 
 public class MainActivity extends FlutterActivity {
 
@@ -133,10 +135,11 @@ public class MainActivity extends FlutterActivity {
                         list.add(DataForSendToPrinterPos58.printAndFeedLine());
 
                         Date date = new Date();
-                        SimpleDateFormat ft = new SimpleDateFormat ("yyyy-MM-dd hh:mm:ss");
+                        DateFormat ft = new DateFormat ();
                         list.add(DataForSendToPrinterPos58.initializePrinter());
                         list.add(DataForSendToPrinterPos58.setAbsolutePrintPosition(0, 00));
-                        list.add(StringUtils.strTobytes("订单时间："+ft.format(date)));
+
+                        list.add(StringUtils.strTobytes("订单时间："+ft.format("yyyy-MM-dd hh:mm:ss",date)));
                         list.add(DataForSendToPrinterPos58.printAndFeedLine());
 
                         list.add(DataForSendToPrinterPos58.initializePrinter());
