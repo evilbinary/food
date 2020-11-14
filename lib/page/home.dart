@@ -40,9 +40,9 @@ SelectView(IconData icon, String text, String id) {
           new Icon(icon, color: Colors.blue),
           new Text(text),
         ],
-      )
-  );
+      ));
 }
+
 class _MyHomePageState extends State<MyHomePage> {
   double _total = 0;
   int _count = 0;
@@ -64,23 +64,23 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _settle() {
     print("settele ${foodListView.order}");
-    var printData={
-      "shopName":"萌丫炸鸡汉堡 --舞蹈学院",
-      "total":_total,
-      "count":_count,
-      "goods":foodListView.order.value
+    var printData = {
+      "shopName": "萌丫炸鸡汉堡",
+      "total": _total,
+      "count": _count,
+      "goods": foodListView.order.value.where((e) => e['count'] > 0).toList()
     };
-    if(_count>0) {
+    if (_count > 0) {
       print(printData);
       _send(jsonEncode(printData));
-    }else{
+    } else {
       _showToast("请先选择菜");
     }
     // foodListView.order.notifyListeners();
     // catValueNotifierData.notifyListeners();
   }
 
-  void _clear(){
+  void _clear() {
     setState(() {
       _total = 0;
       _count = 0;
@@ -90,14 +90,13 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void _send(val) async{
-    String reply=await basicChannel.send(val);
+  void _send(val) async {
+    String reply = await basicChannel.send(val);
     print('ret=>$reply');
-    if(reply=="打印成功") {
+    if (reply == "打印成功") {
       _clear();
     }
     _showToast(reply);
-
   }
 
   void _showToast(String msg) {
@@ -116,13 +115,14 @@ class _MyHomePageState extends State<MyHomePage> {
   FoodListView foodListView = null;
   CategoryListView categoryListView = null;
 
-  static const nativeChannel = const MethodChannel('org.evilbinary.flutter/native');
-  static const basicChannel = BasicMessageChannel<String>('org.evilbinary.flutter/message', StringCodec());
+  static const nativeChannel =
+      const MethodChannel('org.evilbinary.flutter/native');
+  static const basicChannel = BasicMessageChannel<String>(
+      'org.evilbinary.flutter/message', StringCodec());
 
   @override
   void initState() {
     super.initState();
-
   }
 
   // 返回每个隐藏的菜单项
@@ -135,13 +135,14 @@ class _MyHomePageState extends State<MyHomePage> {
             new Icon(icon, color: Colors.blue),
             new Text(text),
           ],
-        )
-    );
+        ));
   }
-  void showPrint() async{
-    var activity='net.printer.print.PrintActivity';
+
+  void showPrint() async {
+    var activity = 'net.printer.print.PrintActivity';
     await nativeChannel.invokeMethod('startActivity', activity);
   }
+
   Future<String> onMessage(String message) {
     print("onMessage=>$message");
   }
@@ -193,21 +194,20 @@ class _MyHomePageState extends State<MyHomePage> {
                     showPrint();
                     break;
                   case 'cat':
-
                     break;
-                  case 'menu': break;
+                  case 'menu':
+                    break;
                 }
               },
             ),
-
           ],
         ),
         body: Container(
-          child: Row(
-            // mainAxisSize: MainAxisSize.max,
-            // mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
+            child: Row(
+                // mainAxisSize: MainAxisSize.max,
+                // mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
               ConstrainedBox(
                 child: categoryListView,
                 constraints: BoxConstraints(
@@ -216,22 +216,29 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
               Expanded(child: foodListView),
-            ],
-          ),
-        ),
+            ])),
+        floatingActionButtonLocation:
+            FloatingActionButtonLocation.miniCenterDocked,
         floatingActionButton: Container(
           color: Colors.black54,
-          // decoration: ,
-          margin: EdgeInsets.only(left: 0, right: 0, bottom: 0),
+          // padding: EdgeInsets.only(bottom: 0),
+          // alignment: Alignment.centerRight,
+          margin: EdgeInsets.only(
+            left: 0,
+            right: 0,
+            bottom: 0,
+          ),
           child: Flex(
             direction: Axis.horizontal,
-            // crossAxisAlignment: CrossAxisAlignment.center,
+            // crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Expanded(
-                flex: 1,
-                child: Text('       合计：$_count 件',
+                flex: 2,
+                child:Container(
+                  margin: EdgeInsets.only(left: 10),
+                  child:  Text('合计：$_count 件',
                     style:
-                        TextStyle(fontSize: 20, color: themeData.buttonColor)),
+                        TextStyle(fontSize: 20, color: themeData.buttonColor)),)
               ),
               Expanded(
                   flex: 0,
@@ -240,16 +247,17 @@ class _MyHomePageState extends State<MyHomePage> {
                     style: TextStyle(fontSize: 24, color: Colors.red),
                   )),
               Expanded(
-                  flex: 0,
-                  child: FlatButton(
-                      color: themeData.primaryColor,
-                      textColor: themeData.buttonColor,
-                      onPressed: _settle,
-                      child: Text("结算"))),
+                flex: 2,
+                child: Container(
+                    margin: EdgeInsets.only(right: 10),
+                    child: FlatButton(
+                        color: themeData.primaryColor,
+                        textColor: themeData.buttonColor,
+                        onPressed: _settle,
+                        child: Text("结算"))),
+              )
             ],
           ),
         ));
   }
-
-
 }
