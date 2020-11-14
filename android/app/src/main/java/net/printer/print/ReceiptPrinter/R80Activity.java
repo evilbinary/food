@@ -15,6 +15,7 @@ import net.posprinter.utils.DataForSendToPrinterPos80;
 import net.posprinter.utils.StringUtils;
 import net.printer.print.PrintActivity;
 
+import org.evilbinary.food.MainActivity;
 import org.evilbinary.food.R;
 
 import java.util.ArrayList;
@@ -76,7 +77,7 @@ public class R80Activity extends AppCompatActivity implements View.OnClickListen
      */
     private void printSample(){
         if (PrintActivity.ISCONNECT){
-            PrintActivity.myBinder.WriteSendData(new TaskCallback() {
+            MainActivity.myBinder.WriteSendData(new TaskCallback() {
                 @Override
                 public void OnSucceed() {
                     Toast.makeText(getApplicationContext(),getString(R.string.con_success), Toast.LENGTH_SHORT).show();
@@ -156,7 +157,7 @@ public class R80Activity extends AppCompatActivity implements View.OnClickListen
     private void printText(){
 
         if (PrintActivity.ISCONNECT){
-            PrintActivity.myBinder.WriteSendData(new TaskCallback() {
+            MainActivity.myBinder.WriteSendData(new TaskCallback() {
                 @Override
                 public void OnSucceed() {
                     Toast.makeText(getApplicationContext(),getString(R.string.con_success), Toast.LENGTH_SHORT).show();
@@ -188,7 +189,7 @@ public class R80Activity extends AppCompatActivity implements View.OnClickListen
      */
     private void printBarcode(){
         if (PrintActivity.ISCONNECT){
-            PrintActivity.myBinder.WriteSendData(new TaskCallback() {
+            MainActivity.myBinder.WriteSendData(new TaskCallback() {
                 @Override
                 public void OnSucceed() {
                     Toast.makeText(getApplicationContext(),getString(R.string.con_success), Toast.LENGTH_SHORT).show();
@@ -229,7 +230,7 @@ public class R80Activity extends AppCompatActivity implements View.OnClickListen
      */
     private void printqr(){
         if (PrintActivity.ISCONNECT){
-            PrintActivity.myBinder.WriteSendData(new TaskCallback() {
+            MainActivity.myBinder.WriteSendData(new TaskCallback() {
                 @Override
                 public void OnSucceed() {
                     Toast.makeText(getApplicationContext(),getString(R.string.con_success), Toast.LENGTH_SHORT).show();
@@ -264,7 +265,7 @@ public class R80Activity extends AppCompatActivity implements View.OnClickListen
                 (BitmapFactory.decodeResource(getResources(), R.drawable.test),300);
 
         if (PrintActivity.ISCONNECT){
-            PrintActivity.myBinder.WriteSendData(new TaskCallback() {
+            MainActivity.myBinder.WriteSendData(new TaskCallback() {
                 @Override
                 public void OnSucceed() {
                     Toast.makeText(getApplicationContext(),getString(R.string.con_success), Toast.LENGTH_SHORT).show();

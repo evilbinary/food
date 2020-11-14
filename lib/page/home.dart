@@ -4,6 +4,7 @@ import 'package:flutter_app2/widget/category.dart';
 import 'package:flutter_app2/widget/food_list.dart';
 import '../widget/food_item.dart';
 import 'dart:convert';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
@@ -45,6 +46,7 @@ SelectView(IconData icon, String text, String id) {
 class _MyHomePageState extends State<MyHomePage> {
   double _total = 0;
   int _count = 0;
+
   void _calcTotal() {
     setState(() {
       if (foodListView.order.value.length > 0) {
@@ -62,6 +64,23 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _settle() {
     print("settele ${foodListView.order}");
+    var printData={
+      "shopName":"萌丫炸鸡汉堡 --舞蹈学院",
+      "total":_total,
+      "count":_count,
+      "goods":foodListView.order.value
+    };
+    if(_count>0) {
+      print(printData);
+      _send(jsonEncode(printData));
+    }else{
+      _showToast("请先选择菜");
+    }
+    // foodListView.order.notifyListeners();
+    // catValueNotifierData.notifyListeners();
+  }
+
+  void _clear(){
     setState(() {
       _total = 0;
       _count = 0;
@@ -69,14 +88,26 @@ class _MyHomePageState extends State<MyHomePage> {
       catValueNotifierData.notifyListeners();
       // foodListView = FoodListView(catValueNotifierData, orderValueNotifierData);
     });
-    _send(jsonEncode(foodListView.order.value));
-    // foodListView.order.notifyListeners();
-    // catValueNotifierData.notifyListeners();
   }
 
   void _send(val) async{
     String reply=await basicChannel.send(val);
     print('ret=>$reply');
+    if(reply=="打印成功") {
+      _clear();
+    }
+    _showToast(reply);
+
+  }
+
+  void _showToast(String msg) {
+    Fluttertoast.showToast(
+        msg: "$msg",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.black45,
+        textColor: Colors.white,
+        fontSize: 16.0);
   }
 
   CatValueNotifierData catValueNotifierData = CatValueNotifierData(1);
@@ -90,7 +121,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-    // catValueNotifierData.notifyListeners();
     super.initState();
 
   }
@@ -129,6 +159,8 @@ class _MyHomePageState extends State<MyHomePage> {
     if (categoryListView == null) {
       categoryListView = CategoryListView(catValueNotifierData);
     }
+    catValueNotifierData.notifyListeners();
+
     ThemeData themeData = Theme.of(context);
     return Scaffold(
         appBar: AppBar(

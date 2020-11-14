@@ -1,4 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="org.evilbinary.food">
     <!-- io.flutter.app.FlutterApplication is an android.app.Application that
          calls FlutterMain.startInitialization(this); in its onCreate method.
@@ -18,9 +19,8 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.hardware.usb.UsbAccessory" />
-
     <application
-        android:name="io.flutter.app.FlutterApplication"
+        android:name="org.evilbinary.food.FoodApplication"
         android:label="点餐"
         android:icon="@mipmap/ic_launcher">
         <activity

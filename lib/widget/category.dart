@@ -4,7 +4,7 @@ import '../mock/food.dart' as food;
 import 'food_list.dart';
 
 class CategoryListViewSate extends State<CategoryListView>{
-  int selectedCat;
+  int selectedCat=1;
   @override
   Widget build(BuildContext context) {
     return ListView(

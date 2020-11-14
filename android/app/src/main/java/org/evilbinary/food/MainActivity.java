@@ -1,11 +1,17 @@
 package org.evilbinary.food;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.util.Log;
 import android.widget.Toast;
 
+import net.posprinter.posprinterface.IMyBinder;
 import net.posprinter.posprinterface.ProcessData;
 import net.posprinter.posprinterface.TaskCallback;
+import net.posprinter.service.PosprinterService;
 import net.posprinter.utils.DataForSendToPrinterPos58;
 import net.posprinter.utils.StringUtils;
 import net.printer.print.PrintActivity;
@@ -31,6 +37,22 @@ public class MainActivity extends FlutterActivity {
     private static final String CHANNEL_NATIVE = "org.evilbinary.flutter/native";
     private static final String CHANNEL_MESSAGE = "org.evilbinary.flutter/message";
     private FlutterEngine flutterEngine;
+
+    public static IMyBinder myBinder;
+
+    ServiceConnection mSerconnection= new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            myBinder= (IMyBinder) service;
+            Log.e("myBinder","connect");
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            Log.e("myBinder","disconnect");
+        }
+    };
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,29 +84,35 @@ public class MainActivity extends FlutterActivity {
             @Override
             public void onMessage(Object o, BasicMessageChannel.Reply reply) {
                 try {
-                    printSample(o.toString());
-                    reply.reply("打印成功");
+                   printSample(o.toString(),reply);
                 } catch (Exception e) {
                     e.printStackTrace();
+                    reply.reply("打印失败,"+e.getMessage());
                 }
 
 
             }
         });
+
+        //bind service，get imyBinder
+        Intent intent =new Intent(this, PosprinterService.class);
+        bindService(intent,mSerconnection,BIND_AUTO_CREATE);
+
     }
 
-    private void printSample(String data) {
+    private int printSample(String data,BasicMessageChannel.Reply reply) {
         if (PrintActivity.ISCONNECT) {
-            PrintActivity.myBinder.WriteSendData(new TaskCallback() {
+            MainActivity.myBinder.WriteSendData(new TaskCallback() {
                 @Override
                 public void OnSucceed() {
-                    Toast.makeText(getApplicationContext(), getString(R.string.con_success), Toast.LENGTH_SHORT).show();
-
+                    //Toast.makeText(getApplicationContext(), getString(R.string.con_success), Toast.LENGTH_SHORT).show();
+                    reply.reply("打印成功");
                 }
 
                 @Override
                 public void OnFailed() {
-                    Toast.makeText(getApplicationContext(), getString(R.string.con_failed), Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(), getString(R.string.con_failed), Toast.LENGTH_SHORT).show();
+                    reply.reply("打印失败");
                 }
             }, new ProcessData() {
                 @Override
@@ -92,73 +120,57 @@ public class MainActivity extends FlutterActivity {
                     List<byte[]> list = new ArrayList<>();
                     try {
                         JSONObject jsonObject = new JSONObject(data);
+                        String shopName=jsonObject.getString("shopName");
                         int total=jsonObject.getInt("total");//总价格
                         int count=jsonObject.getInt("count");//数量
                         JSONArray goods=jsonObject.getJSONArray("goods");
-                        for(int i=0;i<goods.length();i++){
-                            
-                        }
-                        list.add(DataForSendToPrinterPos58.initializePrinter());
+
+//                        list.add(DataForSendToPrinterPos58.initializePrinter());
                         list.add(DataForSendToPrinterPos58.setAbsolutePrintPosition(50, 00));//设置初始位置
                         list.add(DataForSendToPrinterPos58.selectCharacterSize(17));//字体放大一倍
-                        list.add(StringUtils.strTobytes("商品"));
-                        list.add(DataForSendToPrinterPos58.setAbsolutePrintPosition(250, 00));
-                        list.add(StringUtils.strTobytes("价格"));
-                        list.add(DataForSendToPrinterPos58.printAndFeedLine());
+                        list.add(StringUtils.strTobytes(shopName));
                         list.add(DataForSendToPrinterPos58.printAndFeedLine());
 
                         list.add(DataForSendToPrinterPos58.initializePrinter());
-                        list.add(DataForSendToPrinterPos58.setAbsolutePrintPosition(30, 00));
-                        list.add(StringUtils.strTobytes("黄焖鸡"));
-                        list.add(DataForSendToPrinterPos58.setAbsolutePrintPosition(220, 00));
-                        list.add(StringUtils.strTobytes("5元"));
+                        list.add(DataForSendToPrinterPos58.setAbsolutePrintPosition(0, 00));
+                        list.add(StringUtils.strTobytes("---------------------------------------"));
                         list.add(DataForSendToPrinterPos58.printAndFeedLine());
 
                         list.add(DataForSendToPrinterPos58.initializePrinter());
-                        list.add(DataForSendToPrinterPos58.setAbsolutePrintPosition(30, 00));
-                        list.add(StringUtils.strTobytes("黄焖鸡呀"));
-                        list.add(DataForSendToPrinterPos58.setAbsolutePrintPosition(220, 00));
-                        list.add(StringUtils.strTobytes("6元"));
+                        for(int i=0;i<goods.length();i++){
+                            JSONObject good= goods.getJSONObject(i);
+                            list.add(DataForSendToPrinterPos58.initializePrinter());
+                            list.add(DataForSendToPrinterPos58.setAbsolutePrintPosition(30, 00));
+                            list.add(StringUtils.strTobytes(good.getString("title")));
+                            list.add(DataForSendToPrinterPos58.setAbsolutePrintPosition(180, 00));
+                            list.add(StringUtils.strTobytes(""+good.getInt("count")+"件"));
+                            list.add(DataForSendToPrinterPos58.setAbsolutePrintPosition(220, 00));
+                            list.add(StringUtils.strTobytes(good.getString("price")+"元"));
+                            list.add(DataForSendToPrinterPos58.printAndFeedLine());
+                        }
+                        list.add(DataForSendToPrinterPos58.initializePrinter());
+                        list.add(StringUtils.strTobytes("---------------------------------------"));
                         list.add(DataForSendToPrinterPos58.printAndFeedLine());
 
                         list.add(DataForSendToPrinterPos58.initializePrinter());
+                        list.add(DataForSendToPrinterPos58.selectCharacterSize(17));
                         list.add(DataForSendToPrinterPos58.setAbsolutePrintPosition(30, 00));
-                        list.add(StringUtils.strTobytes("黄焖鸡"));
+                        list.add(StringUtils.strTobytes("件数："+count+"件"));
                         list.add(DataForSendToPrinterPos58.setAbsolutePrintPosition(220, 00));
-                        list.add(StringUtils.strTobytes("7元"));
+                        list.add(StringUtils.strTobytes("总价："+total+"元"));
                         list.add(DataForSendToPrinterPos58.printAndFeedLine());
-
-                        list.add(DataForSendToPrinterPos58.initializePrinter());
-                        list.add(DataForSendToPrinterPos58.setAbsolutePrintPosition(30, 00));
-                        list.add(StringUtils.strTobytes("黄焖鸡"));
-                        list.add(DataForSendToPrinterPos58.setAbsolutePrintPosition(220, 00));
-                        list.add(StringUtils.strTobytes("8元"));
-                        list.add(DataForSendToPrinterPos58.printAndFeedLine());
-
-                        list.add(DataForSendToPrinterPos58.initializePrinter());
-                        list.add(DataForSendToPrinterPos58.setAbsolutePrintPosition(30, 00));
-                        list.add(StringUtils.strTobytes("黄焖鸡"));
-                        list.add(DataForSendToPrinterPos58.setAbsolutePrintPosition(220, 00));
-                        list.add(StringUtils.strTobytes("9元"));
-                        list.add(DataForSendToPrinterPos58.printAndFeedLine());
-
-                        list.add(DataForSendToPrinterPos58.initializePrinter());
-                        list.add(DataForSendToPrinterPos58.setAbsolutePrintPosition(30, 00));
-                        list.add(StringUtils.strTobytes("黄焖鸡"));
-                        list.add(DataForSendToPrinterPos58.setAbsolutePrintPosition(220, 00));
-                        list.add(StringUtils.strTobytes("10元"));
                         list.add(DataForSendToPrinterPos58.printAndFeedLine());
 
                     } catch (JSONException e) {
                         e.printStackTrace();
+                        reply.reply("打印异常,"+e.getMessage());
                     }
-
-
                     return list;
                 }
             });
         } else {
             Toast.makeText(getApplicationContext(), getString(R.string.connect_first), Toast.LENGTH_SHORT).show();
         }
+        return -1;
     }
 }

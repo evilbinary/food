@@ -16,6 +16,7 @@ import net.posprinter.utils.DataForSendToPrinterPos58;
 import net.posprinter.utils.DataForSendToPrinterPos76;
 import net.posprinter.utils.StringUtils;
 
+import org.evilbinary.food.MainActivity;
 import org.evilbinary.food.R;
 
 import java.util.ArrayList;
@@ -65,7 +66,7 @@ public class OtherActivity extends Activity implements View.OnClickListener{
      */
     private void text(){
         if (PrintActivity.ISCONNECT){
-            PrintActivity.myBinder.WriteSendData(new TaskCallback() {
+            MainActivity.myBinder.WriteSendData(new TaskCallback() {
                 @Override
                 public void OnSucceed() {
                     Toast.makeText(getApplicationContext(),getString(R.string.con_success), Toast.LENGTH_SHORT).show();
@@ -100,7 +101,7 @@ public class OtherActivity extends Activity implements View.OnClickListener{
         if (PrintActivity.ISCONNECT){
             final Bitmap bitmap1 =  BitmapProcess.compressBmpByYourWidth
                     (BitmapFactory.decodeResource(getResources(), R.drawable.test),508);
-            PrintActivity.myBinder.WriteSendData(new TaskCallback() {
+            MainActivity.myBinder.WriteSendData(new TaskCallback() {
                 @Override
                 public void OnSucceed() {
                     Toast.makeText(getApplicationContext(),getString(R.string.con_success), Toast.LENGTH_SHORT).show();
@@ -132,7 +133,7 @@ public class OtherActivity extends Activity implements View.OnClickListener{
      */
     private void sample(){
         if (PrintActivity.ISCONNECT){
-            PrintActivity.myBinder.WriteSendData(new TaskCallback() {
+            MainActivity.myBinder.WriteSendData(new TaskCallback() {
                 @Override
                 public void OnSucceed() {
                     Toast.makeText(getApplicationContext(),getString(R.string.con_success), Toast.LENGTH_SHORT).show();

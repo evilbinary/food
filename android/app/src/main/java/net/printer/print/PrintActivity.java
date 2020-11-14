@@ -4,12 +4,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.ComponentName;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,13 +20,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import net.posprinter.posprinterface.IMyBinder;
 import net.posprinter.posprinterface.TaskCallback;
-import net.posprinter.service.PosprinterService;
 import net.posprinter.utils.PosPrinterDev;
 import net.printer.print.ReceiptPrinter.R58Activity;
 import net.printer.print.ReceiptPrinter.R80Activity;
 
+import org.evilbinary.food.MainActivity;
 import org.evilbinary.food.R;
 
 import java.util.ArrayList;
@@ -38,31 +34,12 @@ import java.util.List;
 import java.util.Set;
 
 public class PrintActivity extends Activity implements View.OnClickListener{
-
-    public static IMyBinder myBinder;
-
-    ServiceConnection mSerconnection= new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            myBinder= (IMyBinder) service;
-            Log.e("myBinder","connect");
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            Log.e("myBinder","disconnect");
-        }
-    };
-
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setTitle("打印设置");
-        //bind service，get imyBinder
-        Intent intent =new Intent(this, PosprinterService.class);
-        bindService(intent,mSerconnection,BIND_AUTO_CREATE);
-
         initView();
     }
 
@@ -204,7 +181,7 @@ public class PrintActivity extends Activity implements View.OnClickListener{
     private void connectNet(){
         String ip = ip_adrress.getText().toString();
         if (ip!=null||ISCONNECT==false){
-            myBinder.ConnectNetPort(ip, 9100, new TaskCallback() {
+            MainActivity.myBinder.ConnectNetPort(ip, 9100, new TaskCallback() {
                 @Override
                 public void OnSucceed() {
                     ISCONNECT = true;
@@ -231,7 +208,7 @@ public class PrintActivity extends Activity implements View.OnClickListener{
         if (BtAdress.equals(null)||BtAdress.equals("")){
             Toast.makeText(getApplicationContext(),getString(R.string.con_failed), Toast.LENGTH_SHORT).show();
         }else {
-            myBinder.ConnectBtPort(BtAdress, new TaskCallback() {
+            MainActivity.myBinder.ConnectBtPort(BtAdress, new TaskCallback() {
                 @Override
                 public void OnSucceed() {
                     ISCONNECT=true;
@@ -255,7 +232,7 @@ public class PrintActivity extends Activity implements View.OnClickListener{
         if (usbAddress.equals(null)||usbAddress.equals("")){
             Toast.makeText(getApplicationContext(),getString(R.string.discon), Toast.LENGTH_SHORT).show();
         }else {
-            myBinder.ConnectUsbPort(getApplicationContext(), usbAddress, new TaskCallback() {
+            MainActivity.myBinder.ConnectUsbPort(getApplicationContext(), usbAddress, new TaskCallback() {
                 @Override
                 public void OnSucceed() {
                     ISCONNECT = true;
@@ -276,7 +253,7 @@ public class PrintActivity extends Activity implements View.OnClickListener{
      */
     private void disConnect(){
         if (ISCONNECT){
-            myBinder.DisconnectCurrentPort(new TaskCallback() {
+            MainActivity.myBinder.DisconnectCurrentPort(new TaskCallback() {
                 @Override
                 public void OnSucceed() {
                     ISCONNECT = false;

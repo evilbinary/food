@@ -13,6 +13,7 @@ import net.posprinter.utils.BitmapProcess;
 import net.posprinter.utils.BitmapToByteData;
 import net.posprinter.utils.DataForSendToPrinterTSC;
 
+import org.evilbinary.food.MainActivity;
 import org.evilbinary.food.R;
 
 import java.util.ArrayList;
@@ -75,7 +76,7 @@ public class TscActivity extends AppCompatActivity implements View.OnClickListen
     private void printContent(){
         if (PrintActivity.ISCONNECT){
 
-            PrintActivity.myBinder.WriteSendData(new TaskCallback() {
+            MainActivity.myBinder.WriteSendData(new TaskCallback() {
                 @Override
                 public void OnSucceed() {
                     Toast.makeText(getApplicationContext(),getString(R.string.send_success), Toast.LENGTH_SHORT).show();
@@ -121,7 +122,7 @@ public class TscActivity extends AppCompatActivity implements View.OnClickListen
 
         if (PrintActivity.ISCONNECT){
 
-            PrintActivity.myBinder.WriteSendData(new TaskCallback() {
+            MainActivity.myBinder.WriteSendData(new TaskCallback() {
                 @Override
                 public void OnSucceed() {
                     Toast.makeText(getApplicationContext(),getString(R.string.send_success), Toast.LENGTH_SHORT).show();
@@ -166,7 +167,7 @@ public class TscActivity extends AppCompatActivity implements View.OnClickListen
     private void printBarcode(){
         if (PrintActivity.ISCONNECT){
 
-            PrintActivity.myBinder.WriteSendData(new TaskCallback() {
+            MainActivity.myBinder.WriteSendData(new TaskCallback() {
                 @Override
                 public void OnSucceed() {
                     Toast.makeText(getApplicationContext(),getString(R.string.send_success), Toast.LENGTH_SHORT).show();
@@ -210,7 +211,7 @@ public class TscActivity extends AppCompatActivity implements View.OnClickListen
     private void printQR(){
         if (PrintActivity.ISCONNECT){
 
-            PrintActivity.myBinder.WriteSendData(new TaskCallback() {
+            MainActivity.myBinder.WriteSendData(new TaskCallback() {
                 @Override
                 public void OnSucceed() {
                     Toast.makeText(getApplicationContext(),getString(R.string.send_success), Toast.LENGTH_SHORT).show();
@@ -250,7 +251,7 @@ public class TscActivity extends AppCompatActivity implements View.OnClickListen
     private void printbitmap(){
         final Bitmap bitmap1 =  BitmapProcess.compressBmpByYourWidth
                 (BitmapFactory.decodeResource(getResources(), R.drawable.test),150);
-        PrintActivity.myBinder.WriteSendData(new TaskCallback() {
+        MainActivity.myBinder.WriteSendData(new TaskCallback() {
             @Override
             public void OnSucceed() {
                 Toast.makeText(getApplicationContext(),getString(R.string.send_success), Toast.LENGTH_SHORT).show();
