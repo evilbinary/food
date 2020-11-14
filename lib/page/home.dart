@@ -70,20 +70,30 @@ class _MyHomePageState extends State<MyHomePage> {
     print("settele ${foodListView.order}");
     var mark=foodListView.order.value
         .where((e) => e['widget'] == 'text');
+    var goods=foodListView.order.value.where((e) => e['count'] > 0).toList();
     var printData = {
       "shopName": "萌丫炸鸡汉堡",
       "total": _total,
       "count": _count,
       "mark": mark.length<=0?'':mark.first['content'],
-      "goods": foodListView.order.value.where((e) => e['count'] > 0).toList(),
+      "goods": goods,
       "no":0,
     };
     if (_count > 0) {
-      Order o=Order(null,_count,_total);
-      this.widget.db.orderDao.add(o);
-      var id= await this.widget.db.database.rawQuery('SELECT last_insert_rowid();').asStream().first;
-      o.id=id.first.values.first;
-      printData['no']=o.id;
+      try {
+        Order o = Order(null, _count, _total, jsonEncode(goods), DateTime
+            .now()
+            .millisecondsSinceEpoch);
+        this.widget.db.orderDao.add(o);
+        var id = await this.widget.db.database
+            .rawQuery('SELECT last_insert_rowid();')
+            .asStream()
+            .first;
+        o.id = id.first.values.first;
+        printData['no'] = o.id;
+      }catch(ex){
+        _showToast("出错咯，$ex");
+      }
 
       _send(printData);
     } else {

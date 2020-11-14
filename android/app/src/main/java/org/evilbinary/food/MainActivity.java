@@ -137,7 +137,7 @@ public class MainActivity extends FlutterActivity {
                         list.add(DataForSendToPrinterPos58.printAndFeedLine());
 
                         list.add(DataForSendToPrinterPos58.setAbsolutePrintPosition(0, 00));
-                        list.add(StringUtils.strTobytes("编号："));
+                        list.add(StringUtils.strTobytes("取餐号："));
                         list.add(DataForSendToPrinterPos58.setAbsolutePrintPosition(240, 00));
                         list.add(StringUtils.strTobytes("#"+no));
                         list.add(DataForSendToPrinterPos58.printAndFeedLine());
@@ -157,6 +157,7 @@ public class MainActivity extends FlutterActivity {
 
                         list.add(DataForSendToPrinterPos58.initializePrinter());
                         list.add(DataForSendToPrinterPos58.setAbsolutePrintPosition(0, 00));
+                        list.add(DataForSendToPrinterPos58.selectCharacterSize(1));
                         list.add(StringUtils.strTobytes("备注："+mark));
                         list.add(DataForSendToPrinterPos58.printAndFeedLine());
 
