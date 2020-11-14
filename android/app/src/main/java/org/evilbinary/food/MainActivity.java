@@ -132,6 +132,13 @@ public class MainActivity extends FlutterActivity {
                         list.add(StringUtils.strTobytes(shopName));
                         list.add(DataForSendToPrinterPos58.printAndFeedLine());
 
+                        Date date = new Date();
+                        SimpleDateFormat ft = new SimpleDateFormat ("yyyy-MM-dd hh:mm:ss");
+                        list.add(DataForSendToPrinterPos58.initializePrinter());
+                        list.add(DataForSendToPrinterPos58.setAbsolutePrintPosition(0, 00));
+                        list.add(StringUtils.strTobytes("订单时间："+ft.format(date)));
+                        list.add(DataForSendToPrinterPos58.printAndFeedLine());
+
                         list.add(DataForSendToPrinterPos58.initializePrinter());
                         list.add(DataForSendToPrinterPos58.setAbsolutePrintPosition(0, 00));
                         list.add(StringUtils.strTobytes("--------------------------------"));
@@ -144,10 +151,10 @@ public class MainActivity extends FlutterActivity {
                             list.add(DataForSendToPrinterPos58.selectCharacterSize(1));
                             list.add(DataForSendToPrinterPos58.setAbsolutePrintPosition(0, 00));
                             list.add(StringUtils.strTobytes(good.getString("title")));
-                            list.add(DataForSendToPrinterPos58.setAbsolutePrintPosition(140, 00));
-                            list.add(StringUtils.strTobytes(""+good.getInt("count")+"份 "));
-                            list.add(DataForSendToPrinterPos58.setAbsolutePrintPosition(220, 00));
-                            list.add(StringUtils.strTobytes(""+(good.getDouble("price")*good.getInt("count"))+"元"));
+                            list.add(DataForSendToPrinterPos58.setAbsolutePrintPosition(180, 00));
+                            list.add(StringUtils.strTobytes(" "+good.getInt("count")+"份"));
+                            list.add(DataForSendToPrinterPos58.setAbsolutePrintPosition(240, 00));
+                            list.add(StringUtils.strTobytes(" "+(good.getDouble("price")*good.getInt("count"))+"元"));
                             list.add(DataForSendToPrinterPos58.printAndFeedLine());
                         }
                         list.add(DataForSendToPrinterPos58.initializePrinter());
@@ -158,8 +165,8 @@ public class MainActivity extends FlutterActivity {
                         list.add(DataForSendToPrinterPos58.selectCharacterSize(17));
                         list.add(DataForSendToPrinterPos58.setAbsolutePrintPosition(0, 00));
                         list.add(StringUtils.strTobytes(""+count+"份"));
-                        list.add(DataForSendToPrinterPos58.setAbsolutePrintPosition(220, 00));
-                        list.add(StringUtils.strTobytes(" ¥"+total+""));
+                        list.add(DataForSendToPrinterPos58.setAbsolutePrintPosition(240, 00));
+                        list.add(StringUtils.strTobytes(" "+total+"元"));
                         list.add(DataForSendToPrinterPos58.printAndFeedLine());
                         list.add(DataForSendToPrinterPos58.printAndFeedLine());
                         list.add(DataForSendToPrinterPos58.printAndFeedLine());
