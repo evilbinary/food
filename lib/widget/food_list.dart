@@ -36,7 +36,9 @@ class FoodListView extends StatefulWidget {
           "id": item['id'],
           "count": 0,
           "title": item['title'],
-          "price": item['price']
+          "price": item['price'],
+          "widget": item['widget'],
+          "content": item['content'],
         };
         order.value.add(food);
       }else{

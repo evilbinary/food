@@ -68,6 +68,9 @@ class _MyHomePageState extends State<MyHomePage> {
       "shopName": "萌丫炸鸡汉堡",
       "total": _total,
       "count": _count,
+      "mark": foodListView.order.value
+          .where((e) => e['widget'] == 'text')
+          .first['content'],
       "goods": foodListView.order.value.where((e) => e['count'] > 0).toList()
     };
     if (_count > 0) {
@@ -84,7 +87,8 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _total = 0;
       _count = 0;
-      foodListView.order.value.forEach((e) => {e['count'] = 0});
+      foodListView.order.value
+          .forEach((e) => {e['count'] = 0, e['content'] = ''});
       catValueNotifierData.notifyListeners();
       // foodListView = FoodListView(catValueNotifierData, orderValueNotifierData);
     });

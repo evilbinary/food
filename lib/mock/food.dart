@@ -109,6 +109,8 @@ List list = [
   {"title": "4元", "price": 4, "catId": 7,"id":7004,},
   {"title": "5元", "price": 5, "catId": 7,"id":7005,},
   {"title": "10元", "price": 10, "catId": 7,"id":7006,},
+
+  {"title": "备注","widget":"text","content":"", "price": 0, "catId": 8,"id":8001,},
 ];
 
 List category = [
@@ -119,4 +121,5 @@ List category = [
   {"name": "炸串", "id": 5},
   {"name": "饮料", "id": 6},
   {"name": "其他", "id": 7},
+  {"name": "备注", "id": 8},
 ];

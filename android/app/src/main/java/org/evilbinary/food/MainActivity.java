@@ -123,6 +123,7 @@ public class MainActivity extends FlutterActivity {
                     try {
                         JSONObject jsonObject = new JSONObject(data);
                         String shopName=jsonObject.getString("shopName");
+                        String mark=jsonObject.getString("mark");
                         int total=jsonObject.getInt("total");//总价格
                         int count=jsonObject.getInt("count");//数量
                         JSONArray goods=jsonObject.getJSONArray("goods");
@@ -140,6 +141,16 @@ public class MainActivity extends FlutterActivity {
                         list.add(DataForSendToPrinterPos58.setAbsolutePrintPosition(0, 00));
 
                         list.add(StringUtils.strTobytes("订单时间："+ft.format("yyyy-MM-dd hh:mm:ss",date)));
+                        list.add(DataForSendToPrinterPos58.printAndFeedLine());
+
+                        list.add(DataForSendToPrinterPos58.initializePrinter());
+                        list.add(DataForSendToPrinterPos58.setAbsolutePrintPosition(0, 00));
+                        list.add(StringUtils.strTobytes("--------------------------------"));
+                        list.add(DataForSendToPrinterPos58.printAndFeedLine());
+
+                        list.add(DataForSendToPrinterPos58.initializePrinter());
+                        list.add(DataForSendToPrinterPos58.setAbsolutePrintPosition(0, 00));
+                        list.add(StringUtils.strTobytes("备注："+mark));
                         list.add(DataForSendToPrinterPos58.printAndFeedLine());
 
                         list.add(DataForSendToPrinterPos58.initializePrinter());
