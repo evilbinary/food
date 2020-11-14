@@ -21,19 +21,19 @@ class _FoodItemStae extends State<FoodItem>{
     return Flex(
       direction: Axis.horizontal,
       children: <Widget>[
-        Expanded(
-          flex: 1,
-          child: Image.asset(
-            "assets/images/food.png",
-            fit: BoxFit.cover,
-            width: 120,
-            height: 120,
-          ),
-        ),
+        // Expanded(
+        //   flex: 1,
+        //   child: Image.asset(
+        //     "assets/images/food.png",
+        //     fit: BoxFit.cover,
+        //     width: 60,
+        //     height: 60,
+        //   ),
+        // ),
         Expanded(
           flex: 2,
           child: Container(
-            height: 120.0,
+            height: 80.0,
             child: Flex(direction: Axis.vertical, children: [
               Expanded(
                 flex: 2,
@@ -42,7 +42,7 @@ class _FoodItemStae extends State<FoodItem>{
                   height: 30.0,
                   child: Text(item['title'],
                       style: TextStyle(
-                          fontSize: 20.0, fontWeight: FontWeight.bold)),
+                          fontSize: 18.0, fontWeight: FontWeight.bold)),
                 ),
               ),
               Expanded(
@@ -67,7 +67,7 @@ class _FoodItemStae extends State<FoodItem>{
                         ),
                       ),
                       Expanded(
-                        flex: 3,
+                        flex: 2,
                         child: Row(
                           children: [
                             IconButton(

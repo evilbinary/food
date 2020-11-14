@@ -209,15 +209,15 @@ class _MyHomePageState extends State<MyHomePage> {
                 // mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-              ConstrainedBox(
-                child: categoryListView,
-                constraints: BoxConstraints(
-                  minWidth: 90,
-                  maxWidth: 100,
-                ),
-              ),
-              Expanded(child: foodListView),
-            ])),
+                  ConstrainedBox(
+                    child: categoryListView,
+                    constraints: BoxConstraints(
+                      minWidth: 90,
+                      maxWidth: 100,
+                    ),
+                  ),
+                  Expanded(child: foodListView),
+                ])),
         floatingActionButtonLocation:
             FloatingActionButtonLocation.miniCenterDocked,
         floatingActionButton: Container(
@@ -234,13 +234,13 @@ class _MyHomePageState extends State<MyHomePage> {
             // crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Expanded(
-                flex: 2,
-                child:Container(
-                  margin: EdgeInsets.only(left: 10),
-                  child:  Text('合计：$_count 件',
-                    style:
-                        TextStyle(fontSize: 20, color: themeData.buttonColor)),)
-              ),
+                  flex: 2,
+                  child: Container(
+                    margin: EdgeInsets.only(left: 10),
+                    child: Text('合计：$_count 件',
+                        style: TextStyle(
+                            fontSize: 20, color: themeData.buttonColor)),
+                  )),
               Expanded(
                   flex: 0,
                   child: Text(
@@ -255,7 +255,10 @@ class _MyHomePageState extends State<MyHomePage> {
                         color: themeData.primaryColor,
                         textColor: themeData.buttonColor,
                         onPressed: _settle,
-                        child: Text("结算"))),
+                        child: Text("结算",
+                            style: TextStyle(
+                              fontSize: 20.0,
+                            )))),
               )
             ],
           ),
