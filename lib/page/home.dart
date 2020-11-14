@@ -203,6 +203,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
         body: Container(
+            margin: EdgeInsets.only(bottom: 48),
             child: Row(
                 // mainAxisSize: MainAxisSize.max,
                 // mainAxisAlignment: MainAxisAlignment.start,
