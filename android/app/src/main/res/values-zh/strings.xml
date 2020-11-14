@@ -36,7 +36,7 @@
     <string name="qrcode">Print QRcode</string>
     <string name="none_ble_device">no devices are found</string>
     <string name="none_ipaddress">pleesa input the ipaddress first!</string>
-    <string name="connect_first">please connet the printer first!</string>
+    <string name="connect_first">请先连接打印机</string>
     <string name="this_is_text">This is Text!</string>
     <string name="text_for">text for!</string>
     <string name="error_level">error_level</string>

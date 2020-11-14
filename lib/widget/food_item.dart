@@ -18,7 +18,7 @@ class _FoodItemStae extends State<FoodItem> {
     count = widget.item['count'];
     var item = widget.item;
     ThemeData themeData = Theme.of(context);
-    print('build item=>${item}');
+    // print('build item=>${item}');
     if (item['widget'] == 'text') {
       return Column(children: [
         // Text('${item["title"]}'),

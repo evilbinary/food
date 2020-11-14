@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_app2/data/entity/order.dart';
 import 'package:flutter_app2/widget/category.dart';
 import 'package:flutter_app2/widget/food_list.dart';
+import '../main.dart';
 import '../widget/food_item.dart';
 import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
+import '../data/database.dart';
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  MyHomePage({Key key, this.title,this.db}) : super(key: key);
   final String title;
+  AppDatabase db;
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -62,20 +66,26 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void _settle() {
+  void _settle() async{
     print("settele ${foodListView.order}");
+    var mark=foodListView.order.value
+        .where((e) => e['widget'] == 'text');
     var printData = {
       "shopName": "萌丫炸鸡汉堡",
       "total": _total,
       "count": _count,
-      "mark": foodListView.order.value
-          .where((e) => e['widget'] == 'text')
-          .first['content'],
-      "goods": foodListView.order.value.where((e) => e['count'] > 0).toList()
+      "mark": mark.length<=0?'':mark.first['content'],
+      "goods": foodListView.order.value.where((e) => e['count'] > 0).toList(),
+      "no":0,
     };
     if (_count > 0) {
-      print(printData);
-      _send(jsonEncode(printData));
+      Order o=Order(null,_count,_total);
+      this.widget.db.orderDao.add(o);
+      var id= await this.widget.db.database.rawQuery('SELECT last_insert_rowid();').asStream().first;
+      o.id=id.first.values.first;
+      printData['no']=o.id;
+
+      _send(printData);
     } else {
       _showToast("请先选择菜");
     }
@@ -95,7 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _send(val) async {
-    String reply = await basicChannel.send(val);
+    String reply = await basicChannel.send(jsonEncode(val));
     print('ret=>$reply');
     if (reply == "打印成功") {
       _clear();

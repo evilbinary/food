@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -21,6 +22,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import androidx.annotation.Nullable;
@@ -31,8 +33,6 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.StringCodec;
 import io.flutter.plugins.GeneratedPluginRegistrant;
-import java.util.Date;
-import android.text.format.DateFormat;
 
 public class MainActivity extends FlutterActivity {
 
@@ -124,6 +124,7 @@ public class MainActivity extends FlutterActivity {
                         JSONObject jsonObject = new JSONObject(data);
                         String shopName=jsonObject.getString("shopName");
                         String mark=jsonObject.getString("mark");
+                        String no=jsonObject.getString("no");
                         int total=jsonObject.getInt("total");//总价格
                         int count=jsonObject.getInt("count");//数量
                         JSONArray goods=jsonObject.getJSONArray("goods");
@@ -133,6 +134,12 @@ public class MainActivity extends FlutterActivity {
                         list.add(DataForSendToPrinterPos58.setAbsolutePrintPosition(50, 00));//设置初始位置
                         list.add(DataForSendToPrinterPos58.selectCharacterSize(17));//字体放大一倍
                         list.add(StringUtils.strTobytes(shopName));
+                        list.add(DataForSendToPrinterPos58.printAndFeedLine());
+
+                        list.add(DataForSendToPrinterPos58.setAbsolutePrintPosition(0, 00));
+                        list.add(StringUtils.strTobytes("编号："));
+                        list.add(DataForSendToPrinterPos58.setAbsolutePrintPosition(240, 00));
+                        list.add(StringUtils.strTobytes("#"+no));
                         list.add(DataForSendToPrinterPos58.printAndFeedLine());
 
                         Date date = new Date();
