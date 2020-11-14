@@ -239,12 +239,26 @@ class _MyHomePageState extends State<MyHomePage> {
             children: [
               Expanded(
                   flex: 2,
-                  child: Container(
-                    margin: EdgeInsets.only(left: 10),
-                    child: Text('合计：$_count 件',
-                        style: TextStyle(
-                            fontSize: 20, color: themeData.buttonColor)),
-                  )),
+                  child: new GestureDetector(
+                      onTap: () {
+                        showDialog<Null>(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return new SimpleDialog(
+                              title: new Text('已选菜共${_count}份'),
+                              children: _buildOrderPreview(),
+                            );
+                          },
+                        ).then((val) {
+                          print(val);
+                        });
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(left: 10),
+                        child: Text('合计：$_count 件',
+                            style: TextStyle(
+                                fontSize: 20, color: themeData.buttonColor)),
+                      ))),
               Expanded(
                   flex: 0,
                   child: Text(
@@ -267,5 +281,31 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ),
         ));
+  }
+
+  List<Widget> _buildOrderPreview() {
+    return foodListView.order.value
+        .where((e) => e['count'] > 0 || e['widget'] == 'text')
+        .map((e) {
+      if (e['widget'] == 'text') {
+        return new SimpleDialogOption(child: Text("备注:${e['content']}"));
+      }
+      return new SimpleDialogOption(
+        child: Flex(
+          direction: Axis.horizontal,
+          children: [
+            Expanded(
+              flex: 4,
+              child: Text('${e['title']}'),
+            ),
+            Expanded(child: Text(' ${e['count']}份')),
+            Expanded(child: Text(' ${e['price'] * e['count']}元'))
+          ],
+        ),
+        onPressed: () {
+          Navigator.of(context).pop();
+        },
+      );
+    }).toList();
   }
 }
