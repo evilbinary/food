@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.Set;
 
 public class PrintActivity extends Activity implements View.OnClickListener{
-    private FoodApplication app= (FoodApplication) getApplication();;
+    private FoodApplication app= (FoodApplication) FoodApplication.getMyApplication();;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +63,7 @@ public class PrintActivity extends Activity implements View.OnClickListener{
 //        tsc58 = findViewById(R.id.bt_tsc58);
         tsc80 = findViewById(R.id.bt_tsc80);
         other = findViewById(R.id.bt_other);
+
 
         port.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -101,8 +102,34 @@ public class PrintActivity extends Activity implements View.OnClickListener{
 //        tsc58.setOnClickListener(this);
         adrress.setOnClickListener(this);
         other.setOnClickListener(this);
-    }
 
+        initData();
+    }
+    private void initData(){
+        SharedPreferences pref = getSharedPreferences("device", MODE_PRIVATE);
+        String deviceAddress = pref.getString("address", null);
+        int portType = pref.getInt("portType", -1);
+        if(deviceAddress!=null){
+            switch (portType){
+                case 0:
+                    ip_adrress.setVisibility(View.VISIBLE);
+                    ip_adrress.setText(deviceAddress);
+                    adrress.setVisibility(View.GONE);
+                    break;
+                case 1:
+                    ip_adrress.setVisibility(View.GONE);
+                    adrress.setVisibility(View.VISIBLE);
+                    adrress.setText(deviceAddress);
+                    break;
+                case 2:
+                    ip_adrress.setVisibility(View.GONE);
+                    adrress.setVisibility(View.VISIBLE);
+                    adrress.setText(deviceAddress);
+                    break;
+            }
+        }
+
+    }
 
     @Override
     public void onClick(View view) {

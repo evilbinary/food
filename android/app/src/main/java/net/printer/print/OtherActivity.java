@@ -17,14 +17,13 @@ import net.posprinter.utils.DataForSendToPrinterPos76;
 import net.posprinter.utils.StringUtils;
 
 import org.evilbinary.food.FoodApplication;
-import org.evilbinary.food.MainActivity;
 import org.evilbinary.food.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class OtherActivity extends Activity implements View.OnClickListener{
-    private FoodApplication app= (FoodApplication) getApplication();;
+    private FoodApplication app= (FoodApplication) FoodApplication.getMyApplication();;
 
 
     private Button text,pic,sample;

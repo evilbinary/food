@@ -33,7 +33,7 @@ public class MainActivity extends FlutterActivity {
     private static final String CHANNEL_NATIVE = "org.evilbinary.flutter/native";
     private static final String CHANNEL_MESSAGE = "org.evilbinary.flutter/message";
     private FlutterEngine flutterEngine;
-    private FoodApplication app= (FoodApplication) getApplication();
+    private FoodApplication app= (FoodApplication) FoodApplication.getMyApplication();;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,7 +115,7 @@ public class MainActivity extends FlutterActivity {
     private void connectType(TaskCallback callback) {
         if(!app.ISCONNECT) {
             SharedPreferences pref = getSharedPreferences("device", MODE_PRIVATE);
-            String deviceAddress = pref.getString("address", "");
+            String deviceAddress = pref.getString("address", null);
             int portType = pref.getInt("portType", -1);
             if (deviceAddress != null) {
                 if (portType == 0) {

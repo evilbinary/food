@@ -24,7 +24,7 @@ import java.util.List;
 
 public class R58Activity extends Activity implements View.OnClickListener{
 
-    private FoodApplication app= (FoodApplication) getApplication();;
+    private FoodApplication app= (FoodApplication) FoodApplication.getMyApplication();;
 
     private Button sample,text,barcode,qrcode,bitmap;
     @Override

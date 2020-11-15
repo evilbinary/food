@@ -34,13 +34,18 @@ public class FoodApplication extends FlutterApplication {
 
     public int portType=0;//0是网络，1是蓝牙，2是USB
     public static boolean ISCONNECT=false;
+    private static FoodApplication instance;
 
     @Override
     public void onCreate() {
         super.onCreate();
-
+        instance = this;
         //bind service，get imyBinder
         Intent intent =new Intent(this, PosprinterService.class);
         bindService(intent,mSerconnection,BIND_AUTO_CREATE);
+    }
+
+    public static FoodApplication getMyApplication() {
+        return instance;
     }
 }

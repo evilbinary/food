@@ -14,7 +14,6 @@ import net.posprinter.utils.BitmapToByteData;
 import net.posprinter.utils.DataForSendToPrinterTSC;
 
 import org.evilbinary.food.FoodApplication;
-import org.evilbinary.food.MainActivity;
 import org.evilbinary.food.R;
 
 import java.util.ArrayList;
@@ -23,7 +22,7 @@ import java.util.List;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class TscActivity extends AppCompatActivity implements View.OnClickListener{
-    private FoodApplication app= (FoodApplication) getApplication();;
+    private FoodApplication app= (FoodApplication) FoodApplication.getMyApplication();;
 
     private Button content,text,barcode,qrcode,bitmap;
 

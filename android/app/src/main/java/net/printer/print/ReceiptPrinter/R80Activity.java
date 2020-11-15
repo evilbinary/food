@@ -13,10 +13,8 @@ import net.posprinter.utils.BitmapProcess;
 import net.posprinter.utils.BitmapToByteData;
 import net.posprinter.utils.DataForSendToPrinterPos80;
 import net.posprinter.utils.StringUtils;
-import net.printer.print.PrintActivity;
 
 import org.evilbinary.food.FoodApplication;
-import org.evilbinary.food.MainActivity;
 import org.evilbinary.food.R;
 
 import java.util.ArrayList;
@@ -25,7 +23,7 @@ import java.util.List;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class R80Activity extends AppCompatActivity implements View.OnClickListener {
-    private FoodApplication app= (FoodApplication) getApplication();;
+    private FoodApplication app= (FoodApplication) FoodApplication.getMyApplication();;
 
     private Button sample,text,barcode,qrcode,bitmap;
     @Override
