@@ -15,9 +15,8 @@ import net.posprinter.utils.BitmapToByteData;
 import net.posprinter.utils.DataForSendToPrinterPos58;
 import net.posprinter.utils.DataForSendToPrinterPos80;
 import net.posprinter.utils.StringUtils;
-import net.printer.print.PrintActivity;
 
-import org.evilbinary.food.MainActivity;
+import org.evilbinary.food.FoodApplication;
 import org.evilbinary.food.R;
 
 import java.util.ArrayList;
@@ -25,6 +24,7 @@ import java.util.List;
 
 public class R58Activity extends Activity implements View.OnClickListener{
 
+    private FoodApplication app= (FoodApplication) getApplication();;
 
     private Button sample,text,barcode,qrcode,bitmap;
     @Override
@@ -85,8 +85,8 @@ public class R58Activity extends Activity implements View.OnClickListener{
      * 打印样张
      */
     private void printSample(){
-        if (PrintActivity.ISCONNECT){
-            MainActivity.myBinder.WriteSendData(new TaskCallback() {
+        if (app.ISCONNECT){
+            app.myBinder.WriteSendData(new TaskCallback() {
                 @Override
                 public void OnSucceed() {
                     Toast.makeText(getApplicationContext(),getString(R.string.con_success), Toast.LENGTH_SHORT).show();
@@ -165,8 +165,8 @@ public class R58Activity extends Activity implements View.OnClickListener{
      */
     private void printText(){
 
-        if (PrintActivity.ISCONNECT){
-            MainActivity.myBinder.WriteSendData(new TaskCallback() {
+        if (app.ISCONNECT){
+            app.myBinder.WriteSendData(new TaskCallback() {
                 @Override
                 public void OnSucceed() {
                     Toast.makeText(getApplicationContext(),getString(R.string.con_success), Toast.LENGTH_SHORT).show();
@@ -197,8 +197,8 @@ public class R58Activity extends Activity implements View.OnClickListener{
     打印一维条码
      */
     private void printBarcode(){
-        if (PrintActivity.ISCONNECT){
-            MainActivity.myBinder.WriteSendData(new TaskCallback() {
+        if (app.ISCONNECT){
+            app.myBinder.WriteSendData(new TaskCallback() {
                 @Override
                 public void OnSucceed() {
                     Toast.makeText(getApplicationContext(),getString(R.string.con_success), Toast.LENGTH_SHORT).show();
@@ -238,8 +238,8 @@ public class R58Activity extends Activity implements View.OnClickListener{
      * 打印二维条码
      */
     private void printqr(){
-        if (PrintActivity.ISCONNECT){
-            MainActivity.myBinder.WriteSendData(new TaskCallback() {
+        if (app.ISCONNECT){
+            app.myBinder.WriteSendData(new TaskCallback() {
                 @Override
                 public void OnSucceed() {
                     Toast.makeText(getApplicationContext(),getString(R.string.con_success), Toast.LENGTH_SHORT).show();
@@ -273,8 +273,8 @@ public class R58Activity extends Activity implements View.OnClickListener{
         final Bitmap bitmap1 =  BitmapProcess.compressBmpByYourWidth
                 (BitmapFactory.decodeResource(getResources(), R.drawable.test),300);
 
-        if (PrintActivity.ISCONNECT){
-            MainActivity.myBinder.WriteSendData(new TaskCallback() {
+        if (app.ISCONNECT){
+            app.myBinder.WriteSendData(new TaskCallback() {
                 @Override
                 public void OnSucceed() {
                     Toast.makeText(getApplicationContext(),getString(R.string.con_success), Toast.LENGTH_SHORT).show();

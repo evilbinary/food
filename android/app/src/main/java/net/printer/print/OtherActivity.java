@@ -16,6 +16,7 @@ import net.posprinter.utils.DataForSendToPrinterPos58;
 import net.posprinter.utils.DataForSendToPrinterPos76;
 import net.posprinter.utils.StringUtils;
 
+import org.evilbinary.food.FoodApplication;
 import org.evilbinary.food.MainActivity;
 import org.evilbinary.food.R;
 
@@ -23,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OtherActivity extends Activity implements View.OnClickListener{
-
+    private FoodApplication app= (FoodApplication) getApplication();;
 
 
     private Button text,pic,sample;
@@ -65,8 +66,8 @@ public class OtherActivity extends Activity implements View.OnClickListener{
      * 打印文本
      */
     private void text(){
-        if (PrintActivity.ISCONNECT){
-            MainActivity.myBinder.WriteSendData(new TaskCallback() {
+        if (app.ISCONNECT){
+            app.myBinder.WriteSendData(new TaskCallback() {
                 @Override
                 public void OnSucceed() {
                     Toast.makeText(getApplicationContext(),getString(R.string.con_success), Toast.LENGTH_SHORT).show();
@@ -98,10 +99,10 @@ public class OtherActivity extends Activity implements View.OnClickListener{
      * 76图片
      */
     private void printBitmap(){
-        if (PrintActivity.ISCONNECT){
+        if (app.ISCONNECT){
             final Bitmap bitmap1 =  BitmapProcess.compressBmpByYourWidth
                     (BitmapFactory.decodeResource(getResources(), R.drawable.test),508);
-            MainActivity.myBinder.WriteSendData(new TaskCallback() {
+            app.myBinder.WriteSendData(new TaskCallback() {
                 @Override
                 public void OnSucceed() {
                     Toast.makeText(getApplicationContext(),getString(R.string.con_success), Toast.LENGTH_SHORT).show();
@@ -132,8 +133,8 @@ public class OtherActivity extends Activity implements View.OnClickListener{
      * 票据标签
      */
     private void sample(){
-        if (PrintActivity.ISCONNECT){
-            MainActivity.myBinder.WriteSendData(new TaskCallback() {
+        if (app.ISCONNECT){
+            app.myBinder.WriteSendData(new TaskCallback() {
                 @Override
                 public void OnSucceed() {
                     Toast.makeText(getApplicationContext(),getString(R.string.con_success), Toast.LENGTH_SHORT).show();
