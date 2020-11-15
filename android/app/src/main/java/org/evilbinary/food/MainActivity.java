@@ -107,6 +107,7 @@ public class MainActivity extends FlutterActivity {
                 @Override
                 public void OnFailed() {
                     app.ISCONNECT = false;
+                    reply(reply,"打印链接失败");
                     Toast.makeText(getApplicationContext(), getString(R.string.con_failed), Toast.LENGTH_SHORT).show();
                 }
             };
@@ -147,6 +148,30 @@ public class MainActivity extends FlutterActivity {
 
     private int printData(String data, BasicMessageChannel.Reply reply) {
         if (app.ISCONNECT) {
+            //缓存先发送
+            if(app.myBinder.ReadBuffer().realSize()>0){
+                Toast.makeText(getApplicationContext(), "发送缓存"+app.myBinder.ReadBuffer().realSize(), Toast.LENGTH_SHORT).show();
+                List<byte[]> allBytes=new ArrayList<>(app.myBinder.ReadBuffer().realSize());
+                for(int i=0;i<app.myBinder.ReadBuffer().realSize();i++){
+                    allBytes.add(app.myBinder.ReadBuffer().get(i));
+                }
+                app.myBinder.WriteSendData(new TaskCallback() {
+                    @Override
+                    public void OnSucceed() {
+                        Toast.makeText(getApplicationContext(), "发送缓存成功"+allBytes.size(), Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void OnFailed() {
+                        Toast.makeText(getApplicationContext(), "发送缓存失败"+allBytes.size(), Toast.LENGTH_SHORT).show();
+                    }
+                }, new ProcessData() {
+                    @Override
+                    public List<byte[]> processDataBeforeSend() {
+                        return allBytes;
+                    }
+                });
+            }
             app.myBinder.WriteSendData(new TaskCallback() {
                 @Override
                 public void OnSucceed() {
@@ -157,7 +182,6 @@ public class MainActivity extends FlutterActivity {
                 @Override
                 public void OnFailed() {
                     //Toast.makeText(getApplicationContext(), getString(R.string.con_failed), Toast.LENGTH_SHORT).show();
-                    reply(reply,"打印失败");
                     app.ISCONNECT=false;
                     retryPrint(data,reply);
                 }
