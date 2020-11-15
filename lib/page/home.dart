@@ -55,9 +55,9 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       if (foodListView.order.value.length > 0) {
         _total = foodListView.order.value
-            .map((e) => e['price'] * e['count'])
+            .map((e) => e['price'] * e['count']*1.0)
             .toList()
-            .reduce((a, b) => a + b);
+            .reduce((a, b) => (a + b));
         _count = foodListView.order.value
             .map((e) => e['count'])
             .toList()
@@ -67,7 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _settle() async{
-    print("settele ${foodListView.order}");
+    //print("settele ${foodListView.order}");
     var mark=foodListView.order.value
         .where((e) => e['widget'] == 'text');
     var goods=foodListView.order.value.where((e) => e['count'] > 0).toList();

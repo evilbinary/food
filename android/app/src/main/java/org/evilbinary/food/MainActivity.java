@@ -64,25 +64,7 @@ public class MainActivity extends FlutterActivity {
             @Override
             public void onMessage(Object o, BasicMessageChannel.Reply reply) {
                 try {
-                    if(!app.ISCONNECT) {
-                        TaskCallback callback = new TaskCallback() {
-                            @Override
-                            public void OnSucceed() {
-                                app.ISCONNECT = true;
-                                printSample(o.toString(), reply);
-                                Toast.makeText(getApplicationContext(), getString(R.string.con_success), Toast.LENGTH_SHORT).show();
-                            }
-
-                            @Override
-                            public void OnFailed() {
-                                app.ISCONNECT = false;
-                                Toast.makeText(getApplicationContext(), getString(R.string.con_failed), Toast.LENGTH_SHORT).show();
-                            }
-                        };
-                        connectType(callback);
-                    }else {
-                        printSample(o.toString(), reply);
-                    }
+                    printSample(o.toString(), reply);
                 } catch (Exception e) {
                     e.printStackTrace();
                     reply.reply("打印失败,"+e.getMessage());
@@ -112,22 +94,46 @@ public class MainActivity extends FlutterActivity {
         connectType(callback);
     }
 
-    private void connectType(TaskCallback callback) {
+    private void retryPrint(Object o, BasicMessageChannel.Reply reply){
         if(!app.ISCONNECT) {
-            SharedPreferences pref = getSharedPreferences("device", MODE_PRIVATE);
-            String deviceAddress = pref.getString("address", null);
-            int portType = pref.getInt("portType", -1);
-            if (deviceAddress != null) {
-                if (portType == 0) {
-                    app.myBinder.ConnectNetPort(deviceAddress, 9100, callback);
-                } else if (portType == 1) {
-                    app.myBinder.ConnectBtPort(deviceAddress, callback);
-                } else if (portType == 2) {
-                    app.myBinder.ConnectUsbPort(getApplicationContext(), deviceAddress, callback);
-                } else {
-                    Toast.makeText(getApplicationContext(), "网络类型不对", Toast.LENGTH_SHORT).show();
+            TaskCallback callback = new TaskCallback() {
+                @Override
+                public void OnSucceed() {
+                    app.ISCONNECT = true;
+                    printSample(o.toString(), reply);
+                    Toast.makeText(getApplicationContext(), getString(R.string.con_success), Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void OnFailed() {
+                    app.ISCONNECT = false;
+                    Toast.makeText(getApplicationContext(), getString(R.string.con_failed), Toast.LENGTH_SHORT).show();
+                }
+            };
+            connectType(callback);
+        }
+    }
+
+    private void connectType(TaskCallback callback) {
+        try {
+            if (!app.ISCONNECT) {
+                SharedPreferences pref = getSharedPreferences("device", MODE_PRIVATE);
+                String deviceAddress = pref.getString("address", null);
+                int portType = pref.getInt("portType", -1);
+                if (deviceAddress != null) {
+                    if (portType == 0) {
+                        app.myBinder.ConnectNetPort(deviceAddress, 9100, callback);
+                    } else if (portType == 1) {
+                        app.myBinder.ConnectBtPort(deviceAddress, callback);
+                    } else if (portType == 2) {
+                        app.myBinder.ConnectUsbPort(getApplicationContext(), deviceAddress, callback);
+                    } else {
+                        Toast.makeText(getApplicationContext(), "网络类型不对", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
+        }catch (Exception ex){
+            ex.printStackTrace();
         }
     }
 
@@ -144,6 +150,8 @@ public class MainActivity extends FlutterActivity {
                 public void OnFailed() {
                     //Toast.makeText(getApplicationContext(), getString(R.string.con_failed), Toast.LENGTH_SHORT).show();
                     reply.reply("打印失败");
+                    app.ISCONNECT=false;
+                    retryPrint(data,reply);
                 }
             }, new ProcessData() {
                 @Override
