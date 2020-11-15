@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,7 +26,7 @@ import net.posprinter.utils.PosPrinterDev;
 import net.printer.print.ReceiptPrinter.R58Activity;
 import net.printer.print.ReceiptPrinter.R80Activity;
 
-import org.evilbinary.food.MainActivity;
+import org.evilbinary.food.FoodApplication;
 import org.evilbinary.food.R;
 
 import java.util.ArrayList;
@@ -34,21 +35,22 @@ import java.util.List;
 import java.util.Set;
 
 public class PrintActivity extends Activity implements View.OnClickListener{
-    
+    private FoodApplication app= (FoodApplication) getApplication();;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setTitle("打印设置");
         initView();
+
     }
 
     private Spinner port;
     private TextView adrress;
     private EditText ip_adrress;
     private Button connect,disconnect,pos58,pos80,tsc80,other;
-    private int portType=0;//0是网络，1是蓝牙，2是USB
-    public static boolean ISCONNECT=false;
+
 
     private void initView(){
         port=findViewById(R.id.sp_port);
@@ -65,7 +67,7 @@ public class PrintActivity extends Activity implements View.OnClickListener{
         port.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                portType=i;
+                app.portType=i;
                 switch (i){
                     case 0:
                        ip_adrress.setVisibility(View.VISIBLE);
@@ -107,7 +109,7 @@ public class PrintActivity extends Activity implements View.OnClickListener{
         int id = view.getId();
 
         if (id== R.id.connect){
-            switch (portType){
+            switch (app.portType){
                 case 0:
                     connectNet();
                     break;
@@ -126,7 +128,7 @@ public class PrintActivity extends Activity implements View.OnClickListener{
 
         if (id== R.id.tv_address){
 
-            switch (portType){
+            switch (app.portType){
                 case 1:
                    setBluetooth();
                    break;
@@ -138,7 +140,7 @@ public class PrintActivity extends Activity implements View.OnClickListener{
         }
 
         if(id == R.id.bt_pos80){
-            if (ISCONNECT){
+            if (app.ISCONNECT){
                 Intent intent = new Intent(this, R80Activity.class);
                 startActivity(intent);
             }else {
@@ -148,7 +150,7 @@ public class PrintActivity extends Activity implements View.OnClickListener{
         }
 
         if (id == R.id.bt_pos58){
-            if (ISCONNECT){
+            if (app.ISCONNECT){
                 Intent intent = new Intent(this, R58Activity.class);
                 startActivity(intent);
             }else {
@@ -157,7 +159,7 @@ public class PrintActivity extends Activity implements View.OnClickListener{
         }
 
         if (id == R.id.bt_tsc80){
-            if (ISCONNECT){
+            if (app.ISCONNECT){
                 Intent intent = new Intent(this, TscActivity.class);
                 startActivity(intent);
             }else {
@@ -166,7 +168,7 @@ public class PrintActivity extends Activity implements View.OnClickListener{
         }
 
         if (id == R.id.bt_other){
-            if (ISCONNECT){
+            if (app.ISCONNECT){
                 Intent intent = new Intent(this, OtherActivity.class);
                 startActivity(intent);
             }else {
@@ -180,17 +182,18 @@ public class PrintActivity extends Activity implements View.OnClickListener{
      */
     private void connectNet(){
         String ip = ip_adrress.getText().toString();
-        if (ip!=null||ISCONNECT==false){
-            MainActivity.myBinder.ConnectNetPort(ip, 9100, new TaskCallback() {
+        if (ip!=null||app.ISCONNECT==false){
+            app.myBinder.ConnectNetPort(ip, 9100, new TaskCallback() {
                 @Override
                 public void OnSucceed() {
-                    ISCONNECT = true;
+                    app.ISCONNECT = true;
                     Toast.makeText(getApplicationContext(),getString(R.string.con_success), Toast.LENGTH_SHORT).show();
+                    saveAddress(ip);
                 }
 
                 @Override
                 public void OnFailed() {
-                    ISCONNECT = false;
+                    app.ISCONNECT = false;
                     Toast.makeText(getApplicationContext(),getString(R.string.con_failed), Toast.LENGTH_SHORT).show();
                 }
             });
@@ -199,7 +202,12 @@ public class PrintActivity extends Activity implements View.OnClickListener{
             Toast.makeText(getApplicationContext(),getString(R.string.con_failed), Toast.LENGTH_SHORT).show();
         }
     }
-
+    private void saveAddress(String address){
+        SharedPreferences.Editor editor=getSharedPreferences("device",MODE_PRIVATE).edit();
+        editor.putString("address",address);
+        editor.putInt("portType",app.portType);
+        editor.commit();
+    }
     /**
      * 连接蓝牙
      */
@@ -208,16 +216,18 @@ public class PrintActivity extends Activity implements View.OnClickListener{
         if (BtAdress.equals(null)||BtAdress.equals("")){
             Toast.makeText(getApplicationContext(),getString(R.string.con_failed), Toast.LENGTH_SHORT).show();
         }else {
-            MainActivity.myBinder.ConnectBtPort(BtAdress, new TaskCallback() {
+
+            app.myBinder.ConnectBtPort(BtAdress, new TaskCallback() {
                 @Override
                 public void OnSucceed() {
-                    ISCONNECT=true;
+                    app.ISCONNECT=true;
                     Toast.makeText(getApplicationContext(),getString(R.string.con_success), Toast.LENGTH_SHORT).show();
+                    saveAddress(BtAdress);
                 }
 
                 @Override
                 public void OnFailed() {
-                    ISCONNECT=false;
+                    app.ISCONNECT=false;
                     Toast.makeText(getApplicationContext(),getString(R.string.con_failed), Toast.LENGTH_SHORT).show();
                 }
             } );
@@ -232,16 +242,17 @@ public class PrintActivity extends Activity implements View.OnClickListener{
         if (usbAddress.equals(null)||usbAddress.equals("")){
             Toast.makeText(getApplicationContext(),getString(R.string.discon), Toast.LENGTH_SHORT).show();
         }else {
-            MainActivity.myBinder.ConnectUsbPort(getApplicationContext(), usbAddress, new TaskCallback() {
+            app.myBinder.ConnectUsbPort(getApplicationContext(), usbAddress, new TaskCallback() {
                 @Override
                 public void OnSucceed() {
-                    ISCONNECT = true;
+                    app.ISCONNECT = true;
+                    saveAddress(usbAddress);
                     Toast.makeText(getApplicationContext(),getString(R.string.connect), Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
                 public void OnFailed() {
-                    ISCONNECT = false;
+                    app.ISCONNECT = false;
                     Toast.makeText(getApplicationContext(),getString(R.string.discon), Toast.LENGTH_SHORT).show();
                 }
             } );
@@ -252,17 +263,17 @@ public class PrintActivity extends Activity implements View.OnClickListener{
      * 断开连接
      */
     private void disConnect(){
-        if (ISCONNECT){
-            MainActivity.myBinder.DisconnectCurrentPort(new TaskCallback() {
+        if (app.ISCONNECT){
+            app.myBinder.DisconnectCurrentPort(new TaskCallback() {
                 @Override
                 public void OnSucceed() {
-                    ISCONNECT = false;
+                    app.ISCONNECT = false;
                     Toast.makeText(getApplicationContext(),"disconnect ok", Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
                 public void OnFailed() {
-                    ISCONNECT = true;
+                    app.ISCONNECT = true;
                     Toast.makeText(getApplicationContext(),"disconnect failed", Toast.LENGTH_SHORT).show();
                 }
             });

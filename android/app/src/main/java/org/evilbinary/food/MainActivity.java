@@ -1,21 +1,15 @@
 package org.evilbinary.food;
 
-import android.content.ComponentName;
 import android.content.Intent;
-import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.text.format.DateFormat;
-import android.util.Log;
 import android.widget.Toast;
 
-import net.posprinter.posprinterface.IMyBinder;
 import net.posprinter.posprinterface.ProcessData;
 import net.posprinter.posprinterface.TaskCallback;
-import net.posprinter.service.PosprinterService;
 import net.posprinter.utils.DataForSendToPrinterPos58;
 import net.posprinter.utils.StringUtils;
-import net.printer.print.PrintActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,23 +33,7 @@ public class MainActivity extends FlutterActivity {
     private static final String CHANNEL_NATIVE = "org.evilbinary.flutter/native";
     private static final String CHANNEL_MESSAGE = "org.evilbinary.flutter/message";
     private FlutterEngine flutterEngine;
-
-    public static IMyBinder myBinder;
-
-    ServiceConnection mSerconnection= new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            myBinder= (IMyBinder) service;
-            Log.e("myBinder","connect");
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            Log.e("myBinder","disconnect");
-        }
-    };
-
-
+    private FoodApplication app= (FoodApplication) getApplication();
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,7 +64,25 @@ public class MainActivity extends FlutterActivity {
             @Override
             public void onMessage(Object o, BasicMessageChannel.Reply reply) {
                 try {
-                   printSample(o.toString(),reply);
+                    if(!app.ISCONNECT) {
+                        TaskCallback callback = new TaskCallback() {
+                            @Override
+                            public void OnSucceed() {
+                                app.ISCONNECT = true;
+                                printSample(o.toString(), reply);
+                                Toast.makeText(getApplicationContext(), getString(R.string.con_success), Toast.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            public void OnFailed() {
+                                app.ISCONNECT = false;
+                                Toast.makeText(getApplicationContext(), getString(R.string.con_failed), Toast.LENGTH_SHORT).show();
+                            }
+                        };
+                        connectType(callback);
+                    }else {
+                        printSample(o.toString(), reply);
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                     reply.reply("打印失败,"+e.getMessage());
@@ -95,16 +91,49 @@ public class MainActivity extends FlutterActivity {
 
             }
         });
-
-        //bind service，get imyBinder
-        Intent intent =new Intent(this, PosprinterService.class);
-        bindService(intent,mSerconnection,BIND_AUTO_CREATE);
-
     }
 
-    private int printSample(String data,BasicMessageChannel.Reply reply) {
-        if (PrintActivity.ISCONNECT) {
-            MainActivity.myBinder.WriteSendData(new TaskCallback() {
+    @Override
+    protected void onResume() {
+        super.onResume();
+        TaskCallback callback = new TaskCallback() {
+            @Override
+            public void OnSucceed() {
+                app.ISCONNECT = true;
+                Toast.makeText(getApplicationContext(), getString(R.string.con_success), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void OnFailed() {
+                app.ISCONNECT = false;
+                Toast.makeText(getApplicationContext(), getString(R.string.con_failed), Toast.LENGTH_SHORT).show();
+            }
+        };
+        connectType(callback);
+    }
+
+    private void connectType(TaskCallback callback) {
+        if(!app.ISCONNECT) {
+            SharedPreferences pref = getSharedPreferences("device", MODE_PRIVATE);
+            String deviceAddress = pref.getString("address", "");
+            int portType = pref.getInt("portType", -1);
+            if (deviceAddress != null) {
+                if (portType == 0) {
+                    app.myBinder.ConnectNetPort(deviceAddress, 9100, callback);
+                } else if (portType == 1) {
+                    app.myBinder.ConnectBtPort(deviceAddress, callback);
+                } else if (portType == 2) {
+                    app.myBinder.ConnectUsbPort(getApplicationContext(), deviceAddress, callback);
+                } else {
+                    Toast.makeText(getApplicationContext(), "网络类型不对", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    }
+
+    private int printSample(String data, BasicMessageChannel.Reply reply) {
+        if (app.ISCONNECT) {
+            app.myBinder.WriteSendData(new TaskCallback() {
                 @Override
                 public void OnSucceed() {
                     //Toast.makeText(getApplicationContext(), getString(R.string.con_success), Toast.LENGTH_SHORT).show();

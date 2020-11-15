@@ -1,5 +1,14 @@
 package org.evilbinary.food;
 
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.IBinder;
+import android.util.Log;
+
+import net.posprinter.posprinterface.IMyBinder;
+import net.posprinter.service.PosprinterService;
+
 import io.flutter.app.FlutterApplication;
 
 /**
@@ -7,8 +16,31 @@ import io.flutter.app.FlutterApplication;
  * 邮箱:rootdebug@163.com
  */
 public class FoodApplication extends FlutterApplication {
+
+    public static IMyBinder myBinder;
+
+    ServiceConnection mSerconnection= new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            myBinder= (IMyBinder) service;
+            Log.e("myBinder","connect");
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            Log.e("myBinder","disconnect");
+        }
+    };
+
+    public int portType=0;//0是网络，1是蓝牙，2是USB
+    public static boolean ISCONNECT=false;
+
     @Override
     public void onCreate() {
         super.onCreate();
+
+        //bind service，get imyBinder
+        Intent intent =new Intent(this, PosprinterService.class);
+        bindService(intent,mSerconnection,BIND_AUTO_CREATE);
     }
 }
