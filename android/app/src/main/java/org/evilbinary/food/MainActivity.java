@@ -64,7 +64,7 @@ public class MainActivity extends FlutterActivity {
             @Override
             public void onMessage(Object o, BasicMessageChannel.Reply reply) {
                 try {
-                    printSample(o.toString(), reply);
+                    printData(o.toString(), reply);
                 } catch (Exception e) {
                     e.printStackTrace();
                     reply.reply("打印失败,"+e.getMessage());
@@ -94,13 +94,13 @@ public class MainActivity extends FlutterActivity {
         connectType(callback);
     }
 
-    private void retryPrint(Object o, BasicMessageChannel.Reply reply){
+    private synchronized void retryPrint(Object o, BasicMessageChannel.Reply reply){
         if(!app.ISCONNECT) {
             TaskCallback callback = new TaskCallback() {
                 @Override
                 public void OnSucceed() {
                     app.ISCONNECT = true;
-                    printSample(o.toString(), reply);
+                    printData(o.toString(), reply);
                     Toast.makeText(getApplicationContext(), getString(R.string.con_success), Toast.LENGTH_SHORT).show();
                 }
 
@@ -137,19 +137,27 @@ public class MainActivity extends FlutterActivity {
         }
     }
 
-    private int printSample(String data, BasicMessageChannel.Reply reply) {
+    private void reply(BasicMessageChannel.Reply reply,String message){
+        try {
+            reply.reply(message);
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+    }
+
+    private int printData(String data, BasicMessageChannel.Reply reply) {
         if (app.ISCONNECT) {
             app.myBinder.WriteSendData(new TaskCallback() {
                 @Override
                 public void OnSucceed() {
                     //Toast.makeText(getApplicationContext(), getString(R.string.con_success), Toast.LENGTH_SHORT).show();
-                    reply.reply("打印成功");
+                    reply(reply,"打印成功");
                 }
 
                 @Override
                 public void OnFailed() {
                     //Toast.makeText(getApplicationContext(), getString(R.string.con_failed), Toast.LENGTH_SHORT).show();
-                    reply.reply("打印失败");
+                    reply(reply,"打印失败");
                     app.ISCONNECT=false;
                     retryPrint(data,reply);
                 }
@@ -233,13 +241,13 @@ public class MainActivity extends FlutterActivity {
 
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        reply.reply("打印异常,"+e.getMessage());
+                        reply(reply,"打印异常,"+e.getMessage());
                     }
                     return list;
                 }
             });
         } else {
-            Toast.makeText(getApplicationContext(), getString(R.string.connect_first), Toast.LENGTH_SHORT).show();
+            retryPrint(data,reply);
         }
         return -1;
     }
