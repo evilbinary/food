@@ -107,7 +107,7 @@ public class MainActivity extends FlutterActivity {
                 @Override
                 public void OnFailed() {
                     app.ISCONNECT = false;
-                    reply(reply,"打印链接失败");
+                    reply(reply,"打印连接失败，请重新🔗");
                     Toast.makeText(getApplicationContext(), getString(R.string.con_failed), Toast.LENGTH_SHORT).show();
                 }
             };
