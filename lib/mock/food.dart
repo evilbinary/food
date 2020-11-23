@@ -87,6 +87,8 @@ List list = [
   {"title": "包菜", "price": 2, "catId": 5,"id":5017,},
   {"title": "金针菇", "price": 2, "catId": 5,"id":5018,},
   {"title": "娃娃菜", "price": 2, "catId": 5,"id":5019,},
+  {"title": "牛肉串", "price": 15, "catId": 5,"id":5020,},
+
 
 
   {"title": "可乐杯装", "price": 6, "catId": 6,"id":6001,},
