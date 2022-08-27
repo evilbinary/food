@@ -2,14 +2,17 @@ List list = [
   {"title": "韩式炸鸡双拼", "price": 35.0, "catId": 1,"id":1001,},
   {"title": "韩式炸鸡半只", "price": 18, "catId": 1,"id":1002,},
   {"title": "无骨炸鸡+炸年糕", "price": 19, "catId": 1,"id":1003,},
-  {"title": "韩式无骨鸡", "price": 22, "catId": 1,"id":1004,},
+  {"title": "韩式无骨鸡", "price": 23, "catId": 1,"id":1004,},
   {"title": "韩式炸年糕", "price": 10, "catId": 1,"id":1005,},
   {"title": "韩式鸡腿翅中(各3个)", "price": 23, "catId": 1,"id":1006,},
-  {"title": "蜂蜜芥末酱", "price": 2, "catId": 1,"id":1007,},
-  {"title": "甜辣酱", "price": 2, "catId": 1,"id":1008,},
-  {"title": "香辣酱", "price": 2, "catId": 1,"id":1009,},
-  {"title": "麻辣酱", "price": 2, "catId": 1,"id":1010,},
-  {"title": "酸甜酱", "price": 2, "catId": 1,"id":1011,},
+  {"title": "无骨鸡双拼", "price": 26.0, "catId": 1,"id":1013,},
+  {"title": "小份无骨鸡年糕 ", "price": 12.0, "catId": 1,"id":1014,},
+  {"title": "小份无骨鸡 ", "price": 14.0, "catId": 1,"id":1015,},
+  {"title": "韩式炸鸡半只+年糕 ", "price": 23.0, "catId": 1,"id":1016,},
+  {"title": "韩式炸鸡+年糕双拼 ", "price": 25.0, "catId": 1,"id":1017,},
+  {"title": "无骨鸡+年糕双拼 ", "price": 24.0, "catId": 1,"id":1018,},
+
+
 
   {"title": "薯条", "price": 6, "catId": 2,"id":2001,},
   {"title": "曲薯", "price": 7, "catId": 2,"id":2002,},
@@ -35,6 +38,10 @@ List list = [
   {"title": "骨肉相连", "price": 3, "catId": 2,"id":2022,},
   {"title": "川香鸡柳", "price": 3, "catId": 2,"id":2023,},
   {"title": "小食拼盘(薯条+米花+腿排+鸡块)", "price": 18, "catId": 2,"id":2024,},
+  {"title": "甘梅地瓜条", "price": 6, "catId": 2,"id":2025,},
+  {"title": "爆浆糍粑", "price": 5, "catId": 2,"id":2026,},
+  {"title": "热狗", "price": 3, "catId": 2,"id":2027,},
+  {"title": "紫薯豌豆派", "price": 5, "catId": 2,"id":2028,},
 
 
   {"title": "鸡肉卷", "price": 8.0, "catId": 3,"id":3001,},
@@ -53,6 +60,7 @@ List list = [
   {"title": "脆皮炸鸡(切六块)", "price": 26, "catId": 3,"id":3014,},
   {"title": "半只炸鸡", "price": 13, "catId": 3,"id":3015,},
   {"title": "半只蜜汁鸡", "price": 13, "catId": 3,"id":3016,},
+  {"title": "芝士撒粉", "price": 3, "catId": 3,"id":3018,},
 
 
   {"title": "1香辣堡+香辣对翅+鸡肉卷", "price": 22, "catId": 4,"id":4001,},
@@ -63,12 +71,14 @@ List list = [
   {"title": "A萌萌堡+鸡肉卷+可乐", "price": 21, "catId": 4,"id":4006,},
   {"title": "B香辣堡+香辣对翅+可乐", "price": 20, "catId": 4,"id":4007,},
   {"title": "C鸡肉卷+奥尔良烤翅+可乐", "price": 18, "catId": 4,"id":4008,},
-  {"title": "D萌萌堡2个+薯条+雪花鸡柳+可乐2杯", "price": 43, "catId": 4,"id":4009,},
-  {"title": "E香辣堡+鸡肉卷+薯条+盐酥鸡米花+可乐2杯", "price": 39, "catId": 4,"id":4010,},
-  {"title": "F脆皮鸡+萌萌堡+板烧堡+芝士鸡排+可乐2杯", "price": 59, "catId": 4,"id":4011,},
+  // {"title": "D萌萌堡2个+薯条+雪花鸡柳+可乐2杯", "price": 43, "catId": 4,"id":4009,},
+  // {"title": "E香辣堡+鸡肉卷+薯条+盐酥鸡米花+可乐2杯", "price": 39, "catId": 4,"id":4010,},
+  // {"title": "F脆皮鸡+萌萌堡+板烧堡+芝士鸡排+可乐2杯", "price": 59, "catId": 4,"id":4011,},
+  {"title": "G鸡肉卷+香辣鸡腿堡", "price": 16, "catId": 4,"id":4012,},
+  {"title": "H鲜虾堡+薯条+可乐", "price": 19, "catId": 4,"id":4013,},
 
 
-  {"title": "鸭肠", "price": 15, "catId": 5,"id":5001,},
+  {"title": "鸭肠", "price": 13, "catId": 5,"id":5001,},
   {"title": "猪脆骨", "price": 12, "catId": 5,"id":5002,},
   {"title": "羊肉串", "price": 15, "catId": 5,"id":5003,},
   {"title": "鸡肉串", "price": 13, "catId": 5,"id":5004,},
@@ -113,14 +123,24 @@ List list = [
   {"title": "10元", "price": 10, "catId": 7,"id":7006,},
 
   {"title": "备注","widget":"text","content":"", "price": 0, "catId": 8,"id":8001,},
+
+
+  {"title": "蜂蜜芥末酱", "price": 2, "catId": 9,"id":9007,},
+  {"title": "甜辣酱", "price": 2, "catId": 9,"id":9008,},
+  {"title": "香辣酱", "price": 2, "catId": 9,"id":9009,},
+  {"title": "麻辣酱", "price": 2, "catId": 9,"id":9010,},
+  {"title": "酸甜酱", "price": 2, "catId": 9,"id":9011,},
+  {"title": "芝士撒粉", "price": 3.0, "catId": 1,"id":9012,},
+
 ];
 
 List category = [
   {"name": "韩式炸鸡", "id": 1},
   {"name": "美味小食", "id": 2},
   {"name": "炸鸡汉堡", "id": 3},
-  {"name": "炸鸡汉堡套餐", "id": 4},
-  {"name": "炸串", "id": 5},
+  {"name": "汉堡套餐", "id": 4},
+  // {"name": "炸串", "id": 5},
+  {"name": "酱料", "id": 9},
   {"name": "饮料", "id": 6},
   {"name": "其他", "id": 7},
   {"name": "备注", "id": 8},
