@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import '../mock/food.dart' as food;
 import 'food_list.dart';
 
-class CategoryListViewSate extends State<CategoryListView>{
-  int selectedCat=1;
+class CategoryListViewSate extends State<CategoryListView> {
+  int selectedCat = 1;
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -20,6 +20,7 @@ class CategoryListViewSate extends State<CategoryListView>{
     }).toList();
     return cats;
   }
+
   _buildItem(item) {
     return ListTile(
       title: Text(
@@ -28,21 +29,21 @@ class CategoryListViewSate extends State<CategoryListView>{
       // selected: ,
       onTap: () {
         print("item=$item");
-        widget.cat.value=item['id'];
+        widget.cat.value = item['id'];
         widget.cat.notifyListeners();
         setState(() {
-          selectedCat=item['id'];
+          selectedCat = item['id'];
         });
         print("selectCat=$selectedCat");
       },
       selected: item['id'] == selectedCat,
     );
   }
-
 }
+
 class CategoryListView extends StatefulWidget {
-  CategoryListView(cat){
-    this.cat=cat;
+  CategoryListView(cat) {
+    this.cat = cat;
   }
   CatValueNotifierData cat;
 
@@ -50,5 +51,4 @@ class CategoryListView extends StatefulWidget {
   State<StatefulWidget> createState() {
     return CategoryListViewSate();
   }
-
 }

@@ -1,6 +1,8 @@
+import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_app2/data/entity/order.dart';
+import 'package:flutter_app2/model/food.dart';
 import 'package:flutter_app2/widget/category.dart';
 import 'package:flutter_app2/widget/food_list.dart';
 import '../main.dart';
@@ -212,7 +214,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 this.SelectView(Icons.category, '添加分类', 'cat'),
                 this.SelectView(Icons.menu_book, '设置菜名', 'menu'),
                 this.SelectView(Icons.import_export, '导入', 'import'),
-                this.SelectView(Icons.import_export, '导出', 'output'),
+                this.SelectView(Icons.import_export, '导出', 'export'),
               ],
               onSelected: (String action) {
                 // 点击选项的时候
@@ -223,6 +225,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   case 'cat':
                     break;
                   case 'menu':
+                    break;
+                  case 'import':
+                    showImport(context);
+                    break;
+                  case 'export':
+                    showExport(null);
                     break;
                 }
               },
@@ -329,5 +337,18 @@ class _MyHomePageState extends State<MyHomePage> {
         },
       );
     }).toList();
+  }
+
+  showImport(BuildContext context) async {
+    XTypeGroup group = XTypeGroup(label: "json", extensions: <String>['json']);
+    XFile xf = await openFile(acceptedTypeGroups: <XTypeGroup>[group]);
+    Food food = await loadFood(xf);
+  }
+
+  showExport(Food food) async {
+    XTypeGroup group = XTypeGroup(label: "json", extensions: <String>['json']);
+    String filpath = await getSavePath(acceptedTypeGroups: <XTypeGroup>[group]);
+    String content = jsonEncode(food);
+    print(content);
   }
 }
