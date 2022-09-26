@@ -10,7 +10,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import '../data/database.dart';
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title,this.db}) : super(key: key);
+  MyHomePage({Key key, this.title, this.db}) : super(key: key);
   final String title;
   AppDatabase db;
 
@@ -55,7 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       if (foodListView.order.value.length > 0) {
         _total = foodListView.order.value
-            .map((e) => e['price'] * e['count']*1.0)
+            .map((e) => e['price'] * e['count'] * 1.0)
             .toList()
             .reduce((a, b) => (a + b));
         _count = foodListView.order.value
@@ -66,32 +66,33 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void _settle() async{
+  void _settle() async {
     //print("settele ${foodListView.order}");
-    var mark=foodListView.order.value
-        .where((e) => e['widget'] == 'text');
-    var goods=foodListView.order.value.where((e) => e['count'] > 0).toList();
+    var mark = foodListView.order.value.where((e) => e['widget'] == 'text');
+    var goods = foodListView.order.value.where((e) => e['count'] > 0).toList();
     var printData = {
       "shopName": "萌丫炸鸡汉堡",
       "total": _total,
       "count": _count,
-      "mark": mark.length<=0?'':mark.first['content'],
+      "mark": mark.length <= 0 ? '' : mark.first['content'],
       "goods": goods,
-      "no":0,
+      "no": 0,
     };
     if (_count > 0) {
       try {
-        Order o = Order(null, _count, _total, jsonEncode(goods), DateTime
-            .now()
-            .millisecondsSinceEpoch);
+        Order o = Order(null, _count, _total, jsonEncode(goods),
+            DateTime.now().millisecondsSinceEpoch);
         this.widget.db.orderDao.add(o);
-        var id = await this.widget.db.database
+        var id = await this
+            .widget
+            .db
+            .database
             .rawQuery('SELECT last_insert_rowid();')
             .asStream()
             .first;
         o.id = id.first.values.first;
         printData['no'] = o.id;
-      }catch(ex){
+      } catch (ex) {
         _showToast("出错咯，$ex");
       }
 
@@ -289,12 +290,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 flex: 2,
                 child: Container(
                     margin: EdgeInsets.only(right: 10),
-                    child: FlatButton(
-                        color: themeData.primaryColor,
-                        textColor: themeData.buttonColor,
+                    child: TextButton(
                         onPressed: _settle,
                         child: Text("结算",
                             style: TextStyle(
+                              color: themeData.primaryColor,
                               fontSize: 20.0,
                             )))),
               )
