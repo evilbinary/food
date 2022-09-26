@@ -8,55 +8,56 @@ import 'page/login.dart';
 import 'page/home.dart';
 import 'package:path/path.dart';
 
-Future<AppDatabase> buildDataBase() async{
+Future<AppDatabase> buildDataBase() async {
+  Directory appDocDir = null;
+  if (Platform.isAndroid || Platform.isIOS) {
+    appDocDir = await getExternalStorageDirectory();
+  } else {
+    appDocDir = Directory("/tmp");
+  }
+  var databasesPath = appDocDir.path;
+  var path = join(databasesPath, 'food2.db');
 
-    Directory appDocDir = await getExternalStorageDirectory();
-    var databasesPath = appDocDir.path;
-    var path = join('databasesPath', 'food2.db');
-
-    // create migration
-    final migration1to2 = Migration(1, 2, (database) async {
-      // await database.execute('DROP TABLE IF EXISTS Order;');
-      await database.execute('ALTER TABLE Order ADD COLUMN goods TEXT');
-      await database.execute('ALTER TABLE Order ADD COLUMN createTime INTEGER');
-    });
-    AppDatabase database = await $FloorAppDatabase.databaseBuilder(path).addMigrations([migration1to2])
-        .build();
+  // create migration
+  final migration1to2 = Migration(1, 2, (database) async {
+    // await database.execute('DROP TABLE IF EXISTS Order;');
+    await database.execute('ALTER TABLE Order ADD COLUMN goods TEXT');
+    await database.execute('ALTER TABLE Order ADD COLUMN createTime INTEGER');
+  });
+  AppDatabase database = await $FloorAppDatabase
+      .databaseBuilder(path)
+      .addMigrations([migration1to2]).build();
   return database;
 }
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  var db=await buildDataBase();
+  var db = await buildDataBase();
   runApp(MyApp(db));
 }
 
 class MyApp extends StatelessWidget {
   AppDatabase db;
-  MyApp(db){
-    this.db=db;
+  MyApp(db) {
+    this.db = db;
   }
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: '点餐',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-        ),
-        routes: <String, WidgetBuilder>{
-          "login": (context) => LoginPage(),
-          // "themes": (context) => ThemeChangeRoute(),
-          // "language": (context) => LanguageRoute(),
-        },
-        home: MyHomePage(title: '点餐',db:db),
+      title: '点餐',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+      ),
+      routes: <String, WidgetBuilder>{
+        "login": (context) => LoginPage(),
+        // "themes": (context) => ThemeChangeRoute(),
+        // "language": (context) => LanguageRoute(),
+      },
+      home: MyHomePage(title: '点餐', db: db),
     );
   }
 }
-
-
-
-
-

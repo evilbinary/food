@@ -211,6 +211,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 this.SelectView(Icons.settings, '打印设置', 'print'),
                 this.SelectView(Icons.category, '添加分类', 'cat'),
                 this.SelectView(Icons.menu_book, '设置菜名', 'menu'),
+                this.SelectView(Icons.import_export, '导入', 'import'),
+                this.SelectView(Icons.import_export, '导出', 'output'),
               ],
               onSelected: (String action) {
                 // 点击选项的时候
