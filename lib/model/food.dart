@@ -43,7 +43,14 @@ class Item {
         widget: json["widget"] != null ? json["widget"] : "");
   }
   Map toJson() {
-    return {"title": title, "price": price};
+    return {
+      "id": id,
+      "widget": widget == null ? "" : widget,
+      "title": title,
+      "price": price,
+      "catId": catId,
+      "content": content == null ? "" : content
+    };
   }
 
   String title;
@@ -69,7 +76,7 @@ class CategoryItem {
 
 Future<Food> loadFood(XFile xFile) async {
   String content = await xFile.readAsString();
-  Food f = jsonDecode(content);
+  Food f = Food.fromJson(jsonDecode(content));
   return f;
 }
 
@@ -105,4 +112,7 @@ class OrderFood extends Item {
 
 class FoodValueNotifierData extends ValueNotifier<Food> {
   FoodValueNotifierData(value) : super(value);
+  update(Food food) {
+    value = food;
+  }
 }

@@ -4,8 +4,7 @@ import 'package:flutter_app2/model/food.dart';
 import 'food_list.dart';
 
 class CategoryListViewSate extends State<CategoryListView> {
-  CategoryListViewSate(this.food);
-  Food food;
+  CategoryListViewSate();
   int selectedCat = 1;
   @override
   Widget build(BuildContext context) {
@@ -15,8 +14,16 @@ class CategoryListViewSate extends State<CategoryListView> {
         children: _getCategoryList());
   }
 
+  @override
+  void initState() {
+    widget.food.addListener(() {
+      setState(() {});
+    });
+    super.initState();
+  }
+
   List<Widget> _getCategoryList() {
-    List<Widget> cats = food.category.map<Widget>((item) {
+    List<Widget> cats = widget.food.value.category.map<Widget>((item) {
       // return CategoryItem(item);
       return _buildItem(item);
     }).toList();
@@ -49,10 +56,10 @@ class CategoryListView extends StatefulWidget {
     this.food = food;
   }
   CatValueNotifierData cat;
-  Food food;
+  FoodValueNotifierData food;
 
   @override
   State<StatefulWidget> createState() {
-    return CategoryListViewSate(food);
+    return CategoryListViewSate();
   }
 }

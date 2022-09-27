@@ -18,7 +18,6 @@ Future<AppDatabase> buildDataBase() async {
     // for linux
     appDocDir = Directory("/tmp");
   }
-  print(appDocDir.path);
   var databasesPath = appDocDir.path;
   var path = join(databasesPath, 'food2.db');
 
@@ -38,12 +37,12 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   var db = await buildDataBase();
   Food food = await getFood();
-  runApp(MyApp(db, food));
+  runApp(MyApp(db, FoodValueNotifierData(food)));
 }
 
 class MyApp extends StatelessWidget {
   AppDatabase db;
-  Food food;
+  FoodValueNotifierData food;
   MyApp(db, food) {
     this.db = db;
     this.food = food;

@@ -15,7 +15,7 @@ class FoodListView extends StatefulWidget {
   FoodListView(this.cat, this.order, this.food);
   CatValueNotifierData cat;
   OrderValueNotifierData order;
-  Food food;
+  FoodValueNotifierData food;
 
   List<Item> foods = [];
 
@@ -23,7 +23,7 @@ class FoodListView extends StatefulWidget {
     if (value == null) {
       value = 1;
     }
-    List foods = food.list.where((e) => e.catId == value).toList();
+    List foods = food.value.list.where((e) => e.catId == value).toList();
     return foods;
   }
 
@@ -74,6 +74,14 @@ class _FoodListViewState extends State<FoodListView> {
     setState(() {
       widget.foods = widget.getFoodList(widget.cat.value);
     });
+  }
+
+  @override
+  void initState() {
+    widget.food.addListener(() {
+      setState(() {});
+    });
+    super.initState();
   }
 
   @override

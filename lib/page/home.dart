@@ -16,7 +16,7 @@ class MyHomePage extends StatefulWidget {
       : super(key: key);
   final String title;
   AppDatabase db;
-  Food food;
+  FoodValueNotifierData food;
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -141,18 +141,13 @@ class _MyHomePageState extends State<MyHomePage> {
   OrderValueNotifierData orderValueNotifierData =
       OrderValueNotifierData(List<OrderFood>());
 
-  FoodListView foodListView = null;
-  CategoryListView categoryListView = null;
+  FoodListView foodListView;
+  CategoryListView categoryListView;
 
   static const nativeChannel =
       const MethodChannel('org.evilbinary.flutter/native');
   static const basicChannel = BasicMessageChannel<String>(
       'org.evilbinary.flutter/message', StringCodec());
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   // 返回每个隐藏的菜单项
   SelectView(IconData icon, String text, String id) {
@@ -191,7 +186,7 @@ class _MyHomePageState extends State<MyHomePage> {
       categoryListView = CategoryListView(catValueNotifierData, widget.food);
     }
     catValueNotifierData.notifyListeners();
-
+    print(widget.food.value.category.length);
     ThemeData themeData = Theme.of(context);
     return Scaffold(
         appBar: AppBar(
@@ -222,7 +217,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     showImport(context);
                     break;
                   case 'export':
-                    showExport(context, widget.food);
+                    showExport(context);
                     break;
                 }
               },
@@ -334,7 +329,21 @@ class _MyHomePageState extends State<MyHomePage> {
   showImport(BuildContext context) async {
     XTypeGroup group = XTypeGroup(label: "json", extensions: <String>['json']);
     XFile xf = await openFile(acceptedTypeGroups: <XTypeGroup>[group]);
-    Food food = await loadFood(xf);
+    if (xf == null) {
+      return;
+    }
+    try {
+      Food food = await loadFood(xf);
+      // 更新菜品
+      widget.food.update(food);
+    } catch (e) {
+      showDialog<Null>(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(title: Text('导入失败，请检查配置文件'));
+          });
+      return;
+    }
     showDialog<Null>(
         context: context,
         builder: (BuildContext context) {
@@ -342,10 +351,10 @@ class _MyHomePageState extends State<MyHomePage> {
         });
   }
 
-  showExport(BuildContext context, Food food) async {
+  showExport(BuildContext context) async {
     XTypeGroup group = XTypeGroup(label: "json", extensions: <String>['json']);
     String path = await getSavePath(acceptedTypeGroups: <XTypeGroup>[group]);
-    String content = jsonEncode(food);
+    String content = jsonEncode(widget.food.value);
     File file = File(path);
     file.writeAsString(content);
     showDialog<Null>(
