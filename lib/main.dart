@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:floor/floor.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app2/model/food.dart';
 import 'package:path_provider/path_provider.dart';
 import 'data/database.dart';
 import 'page/login.dart';
@@ -9,7 +11,7 @@ import 'page/home.dart';
 import 'package:path/path.dart';
 
 Future<AppDatabase> buildDataBase() async {
-  Directory appDocDir = null;
+  Directory appDocDir;
   if (Platform.isAndroid || Platform.isIOS) {
     appDocDir = await getExternalStorageDirectory();
   } else {
@@ -33,13 +35,16 @@ Future<AppDatabase> buildDataBase() async {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   var db = await buildDataBase();
-  runApp(MyApp(db));
+  Food food = await getFood();
+  runApp(MyApp(db, food));
 }
 
 class MyApp extends StatelessWidget {
   AppDatabase db;
-  MyApp(db) {
+  Food food;
+  MyApp(db, food) {
     this.db = db;
+    this.food = food;
   }
 
   // This widget is the root of your application.
@@ -57,7 +62,11 @@ class MyApp extends StatelessWidget {
         // "themes": (context) => ThemeChangeRoute(),
         // "language": (context) => LanguageRoute(),
       },
-      home: MyHomePage(title: '点餐', db: db),
+      home: MyHomePage(
+        title: '点餐',
+        db: db,
+        food: food,
+      ),
     );
   }
 }
