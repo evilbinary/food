@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -220,7 +222,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     showImport(context);
                     break;
                   case 'export':
-                    showExport(null);
+                    showExport(context, widget.food);
                     break;
                 }
               },
@@ -333,12 +335,23 @@ class _MyHomePageState extends State<MyHomePage> {
     XTypeGroup group = XTypeGroup(label: "json", extensions: <String>['json']);
     XFile xf = await openFile(acceptedTypeGroups: <XTypeGroup>[group]);
     Food food = await loadFood(xf);
+    showDialog<Null>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(title: Text('导入成功'));
+        });
   }
 
-  showExport(Food food) async {
+  showExport(BuildContext context, Food food) async {
     XTypeGroup group = XTypeGroup(label: "json", extensions: <String>['json']);
-    String filpath = await getSavePath(acceptedTypeGroups: <XTypeGroup>[group]);
+    String path = await getSavePath(acceptedTypeGroups: <XTypeGroup>[group]);
     String content = jsonEncode(food);
-    print(content);
+    File file = File(path);
+    file.writeAsString(content);
+    showDialog<Null>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(title: Text('导出成功'));
+        });
   }
 }

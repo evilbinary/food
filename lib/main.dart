@@ -12,11 +12,13 @@ import 'package:path/path.dart';
 
 Future<AppDatabase> buildDataBase() async {
   Directory appDocDir;
-  if (Platform.isAndroid || Platform.isIOS) {
+  if (Platform.isAndroid) {
     appDocDir = await getExternalStorageDirectory();
   } else {
+    // for linux
     appDocDir = Directory("/tmp");
   }
+  print(appDocDir.path);
   var databasesPath = appDocDir.path;
   var path = join(databasesPath, 'food2.db');
 

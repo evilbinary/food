@@ -1,8 +1,10 @@
 import 'dart:convert';
 
 import 'package:file_selector/file_selector.dart';
+import 'package:flutter/material.dart';
 import "dart:io";
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:get/state_manager.dart';
 
 class Food {
   Food({this.category, this.list});
@@ -23,6 +25,9 @@ class Food {
     }
     return Food(list: items, category: categoryItems);
   }
+  Map toJson() {
+    return {"list": list, "category": category};
+  }
 }
 
 class Item {
@@ -34,9 +39,13 @@ class Item {
         price: json["price"].toDouble(),
         catId: json["catId"] as int,
         title: json["title"] as String,
-        content: json["content"] ? json["content"] : "",
-        widget: json["widget"] ? json["widget"] : "");
+        content: json["content"] != null ? json["content"] : "",
+        widget: json["widget"] != null ? json["widget"] : "");
   }
+  Map toJson() {
+    return {"title": title, "price": price};
+  }
+
   String title;
   double price;
   int catId;
@@ -50,6 +59,10 @@ class CategoryItem {
   factory CategoryItem.fromJson(Map<String, dynamic> e) {
     return CategoryItem(id: e["id"] as int, name: e["name"] as String);
   }
+  Map toJson() {
+    return {"name": name, "id": id};
+  }
+
   String name;
   int id;
 }
@@ -88,4 +101,8 @@ class OrderFood extends Item {
   double price;
   String widget;
   String content;
+}
+
+class FoodValueNotifierData extends ValueNotifier<Food> {
+  FoodValueNotifierData(value) : super(value);
 }
