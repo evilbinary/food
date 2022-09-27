@@ -6,11 +6,11 @@ import "dart:io";
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:get/state_manager.dart';
 
-class Food {
-  Food({this.category, this.list});
+class FoodMenu {
+  FoodMenu({this.category, this.list});
   List<Item> list;
   List<CategoryItem> category;
-  factory Food.fromJson(Map<String, dynamic> json) {
+  factory FoodMenu.fromJson(Map<String, dynamic> json) {
     List<dynamic> itemJsonArray = json["list"].toList();
     List<dynamic> categoryItemJsonArray = json["category"].toList();
     List<Item> items = [];
@@ -23,7 +23,7 @@ class Food {
       var c = CategoryItem.fromJson(e);
       categoryItems.add(c);
     }
-    return Food(list: items, category: categoryItems);
+    return FoodMenu(list: items, category: categoryItems);
   }
   Map toJson() {
     return {"list": list, "category": category};
@@ -74,28 +74,28 @@ class CategoryItem {
   int id;
 }
 
-Future<Food> loadFood(XFile xFile) async {
+Future<FoodMenu> loadFood(XFile xFile) async {
   String content = await xFile.readAsString();
-  Food f = Food.fromJson(jsonDecode(content));
+  FoodMenu f = FoodMenu.fromJson(jsonDecode(content));
   return f;
 }
 
-saveFood(Food food) async {
-  String content = jsonEncode(food);
+saveFood(FoodMenu menu) async {
+  String content = jsonEncode(menu);
   File f = new File('/tmp/config.json');
   var writer = f.openWrite();
   writer.write(content);
   await writer.close();
 }
 
-Future<Food> getFood() async {
+Future<FoodMenu> getFood() async {
   try {
     XFile file = XFile("/tmp/config.json");
-    Food food = await loadFood(file);
-    return food;
+    FoodMenu menu = await loadFood(file);
+    return menu;
   } catch (e) {
     String content = await rootBundle.loadString('assets/images/food.json');
-    return Food.fromJson(jsonDecode(content));
+    return FoodMenu.fromJson(jsonDecode(content));
   }
 }
 
@@ -110,9 +110,9 @@ class OrderFood extends Item {
   String content;
 }
 
-class FoodValueNotifierData extends ValueNotifier<Food> {
+class FoodValueNotifierData extends ValueNotifier<FoodMenu> {
   FoodValueNotifierData(value) : super(value);
-  update(Food food) {
-    value = food;
+  update(FoodMenu menu) {
+    value = menu;
   }
 }

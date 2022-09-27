@@ -36,16 +36,16 @@ Future<AppDatabase> buildDataBase() async {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   var db = await buildDataBase();
-  Food food = await getFood();
-  runApp(MyApp(db, FoodValueNotifierData(food)));
+  FoodMenu menu = await getFood();
+  runApp(MyApp(db, FoodValueNotifierData(menu)));
 }
 
 class MyApp extends StatelessWidget {
   AppDatabase db;
-  FoodValueNotifierData food;
-  MyApp(db, food) {
+  FoodValueNotifierData menu;
+  MyApp(db, menu) {
     this.db = db;
-    this.food = food;
+    this.menu = menu;
   }
 
   // This widget is the root of your application.
@@ -66,7 +66,7 @@ class MyApp extends StatelessWidget {
       home: MyHomePage(
         title: '点餐',
         db: db,
-        food: food,
+        food: menu,
       ),
     );
   }

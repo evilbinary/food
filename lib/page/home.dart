@@ -333,7 +333,7 @@ class _MyHomePageState extends State<MyHomePage> {
       return;
     }
     try {
-      Food food = await loadFood(xf);
+      FoodMenu food = await loadFood(xf);
       // 更新菜品
       widget.food.update(food);
     } catch (e) {
