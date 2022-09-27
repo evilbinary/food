@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app2/model/food.dart';
 
 import 'food_list.dart';
 
 class FoodItem extends StatefulWidget {
   FoodItem(this.item, this.order);
   OrderValueNotifierData order;
-  var item;
+  OrderFood item;
   @override
   State<StatefulWidget> createState() {
     return _FoodItemStae();
@@ -15,11 +16,11 @@ class FoodItem extends StatefulWidget {
 class _FoodItemStae extends State<FoodItem> {
   int count;
   Widget build(BuildContext context) {
-    count = widget.item['count'];
+    count = widget.item.count;
     var item = widget.item;
     ThemeData themeData = Theme.of(context);
     // print('build item=>${item}');
-    if (item['widget'] == 'text') {
+    if (item.widget == 'text') {
       return Column(children: [
         // Text('${item["title"]}'),
         TextField(
@@ -29,13 +30,13 @@ class _FoodItemStae extends State<FoodItem> {
           ),
           controller: TextEditingController.fromValue(TextEditingValue(
               text:
-                  '${item['content'] == null ? "" : item['content']}', //判断keyword是否为空
+                  '${item.content == null ? "" : item.content}', //判断keyword是否为空
               // 保持光标在最后
               selection: TextSelection.fromPosition(TextPosition(
                   affinity: TextAffinity.downstream,
-                  offset: '${item['content']}'.length)))),
+                  offset: '${item.content}'.length)))),
           onChanged: (text) {
-            item['content'] = text;
+            item.content = text;
             print("content: $text");
           },
         )
@@ -63,7 +64,7 @@ class _FoodItemStae extends State<FoodItem> {
                 child: Container(
                   alignment: Alignment.topLeft,
                   height: 50.0,
-                  child: Text(item['title'],
+                  child: Text(item.title,
                       style: TextStyle(
                           fontSize: 18.0, fontWeight: FontWeight.bold)),
                 ),
@@ -81,7 +82,7 @@ class _FoodItemStae extends State<FoodItem> {
                         flex: 2,
                         child: Container(
                           height: 30.0,
-                          child: Text('¥${item["price"]}',
+                          child: Text('¥${item.price}',
                               style: TextStyle(
                                 color: Colors.red,
                                 fontSize: 20.0,
@@ -100,15 +101,15 @@ class _FoodItemStae extends State<FoodItem> {
                                   setState(() {
                                     if (count >= 1) {
                                       count--;
-                                      item["count"]--;
+                                      item.count--;
                                       widget.order.notifyListeners();
                                     }
                                   });
 
-                                  print('count ${item["count"]}');
+                                  print('count ${item.count}');
                                 }),
                             Text(
-                              '${item["count"]}',
+                              '${item.count}',
                               style: TextStyle(fontSize: 18),
                             ),
                             IconButton(
@@ -117,11 +118,11 @@ class _FoodItemStae extends State<FoodItem> {
                                 onPressed: () {
                                   setState(() {
                                     count++;
-                                    item["count"]++;
+                                    item.count++;
                                     widget.order.notifyListeners();
                                   });
 
-                                  print('count ${item["count"]}');
+                                  print('count ${item.count}');
                                 }),
                           ],
                         ),

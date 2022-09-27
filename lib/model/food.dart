@@ -26,18 +26,23 @@ class Food {
 }
 
 class Item {
-  Item({this.title, this.price, this.catId, this.id});
+  Item(
+      {this.title, this.price, this.catId, this.id, this.widget, this.content});
   factory Item.fromJson(Map<String, dynamic> json) {
     return Item(
         id: json["id"] as int,
         price: json["price"].toDouble(),
         catId: json["catId"] as int,
-        title: json["title"] as String);
+        title: json["title"] as String,
+        content: json["content"] ? json["content"] : "",
+        widget: json["widget"] ? json["widget"] : "");
   }
   String title;
   double price;
   int catId;
   int id;
+  String widget;
+  String content;
 }
 
 class CategoryItem {
@@ -74,7 +79,7 @@ Future<Food> getFood() async {
   }
 }
 
-class OrderFood {
+class OrderFood extends Item {
   OrderFood(
       {this.id, this.title, this.count, this.price, this.widget, this.content});
   int id;

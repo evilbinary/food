@@ -5,16 +5,16 @@ import 'package:flutter_app2/data/entity/order.dart';
 import 'package:flutter_app2/model/food.dart';
 import 'package:flutter_app2/widget/category.dart';
 import 'package:flutter_app2/widget/food_list.dart';
-import '../main.dart';
-import '../widget/food_item.dart';
 import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../data/database.dart';
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title, this.db}) : super(key: key);
+  MyHomePage({Key key, this.title, this.db, @required this.food})
+      : super(key: key);
   final String title;
   AppDatabase db;
+  Food food;
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -57,11 +57,11 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       if (foodListView.order.value.length > 0) {
         _total = foodListView.order.value
-            .map((e) => e['price'] * e['count'] * 1.0)
+            .map((e) => e.price * e.count * 1.0)
             .toList()
             .reduce((a, b) => (a + b));
         _count = foodListView.order.value
-            .map((e) => e['count'])
+            .map((e) => e.count)
             .toList()
             .reduce((a, b) => a + b);
       }
@@ -70,13 +70,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _settle() async {
     //print("settele ${foodListView.order}");
-    var mark = foodListView.order.value.where((e) => e['widget'] == 'text');
-    var goods = foodListView.order.value.where((e) => e['count'] > 0).toList();
+    var mark = foodListView.order.value.where((e) => e.widget == 'text');
+    var goods = foodListView.order.value.where((e) => e.count > 0).toList();
     var printData = {
       "shopName": "萌丫炸鸡汉堡",
       "total": _total,
       "count": _count,
-      "mark": mark.length <= 0 ? '' : mark.first['content'],
+      "mark": mark.length <= 0 ? '' : mark.first.content,
       "goods": goods,
       "no": 0,
     };
@@ -110,8 +110,7 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _total = 0;
       _count = 0;
-      foodListView.order.value
-          .forEach((e) => {e['count'] = 0, e['content'] = ''});
+      foodListView.order.value.forEach((e) => {e.count = 0, e.content = ''});
       catValueNotifierData.notifyListeners();
       // foodListView = FoodListView(catValueNotifierData, orderValueNotifierData);
     });
@@ -137,7 +136,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   CatValueNotifierData catValueNotifierData = CatValueNotifierData(1);
-  OrderValueNotifierData orderValueNotifierData = OrderValueNotifierData([]);
+  OrderValueNotifierData orderValueNotifierData =
+      OrderValueNotifierData(List<OrderFood>());
 
   FoodListView foodListView = null;
   CategoryListView categoryListView = null;
@@ -182,10 +182,11 @@ class _MyHomePageState extends State<MyHomePage> {
       _calcTotal();
     });
     if (foodListView == null) {
-      foodListView = FoodListView(catValueNotifierData, orderValueNotifierData);
+      foodListView = FoodListView(
+          catValueNotifierData, orderValueNotifierData, widget.food);
     }
     if (categoryListView == null) {
-      categoryListView = CategoryListView(catValueNotifierData);
+      categoryListView = CategoryListView(catValueNotifierData, widget.food);
     }
     catValueNotifierData.notifyListeners();
 
@@ -193,17 +194,6 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
         appBar: AppBar(
           title: Text(widget.title),
-          // leading: Builder(
-          //   builder: (BuildContext context) {
-          //     return IconButton(
-          //       icon: const Icon(Icons.settings),
-          //       onPressed: () {
-          //         Scaffold.of(context).openDrawer();
-          //       },
-          //       tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
-          //     );
-          //   },
-          // ),
           actions: <Widget>[
             //导航栏右侧菜单
             // IconButton(icon: Icon(Icons.settings), onPressed: () {}),
@@ -315,10 +305,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   List<Widget> _buildOrderPreview() {
     return foodListView.order.value
-        .where((e) => e['count'] > 0 || e['widget'] == 'text')
+        .where((e) => e.count > 0 || e.widget == 'text')
         .map((e) {
-      if (e['widget'] == 'text') {
-        return new SimpleDialogOption(child: Text("备注:${e['content']}"));
+      if (e.widget == 'text') {
+        return new SimpleDialogOption(child: Text("备注:${e.content}"));
       }
       return new SimpleDialogOption(
         child: Flex(
@@ -326,10 +316,10 @@ class _MyHomePageState extends State<MyHomePage> {
           children: [
             Expanded(
               flex: 4,
-              child: Text('${e['title']}'),
+              child: Text('${e.title}'),
             ),
-            Expanded(child: Text(' ${e['count']}份')),
-            Expanded(child: Text(' ${e['price'] * e['count']}元'))
+            Expanded(child: Text(' ${e.count}份')),
+            Expanded(child: Text(' ${e.price * e.count}元'))
           ],
         ),
         onPressed: () {

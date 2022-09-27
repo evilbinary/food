@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app2/model/food.dart';
 // 引入 mock 数据
-import '../mock/food.dart' as food;
 import 'food_list.dart';
 
 class CategoryListViewSate extends State<CategoryListView> {
+  CategoryListViewSate(this.food);
+  Food food;
   int selectedCat = 1;
   @override
   Widget build(BuildContext context) {
@@ -21,34 +23,36 @@ class CategoryListViewSate extends State<CategoryListView> {
     return cats;
   }
 
-  _buildItem(item) {
+  _buildItem(CategoryItem item) {
     return ListTile(
       title: Text(
-        item['name'],
+        item.name,
       ),
       // selected: ,
       onTap: () {
         print("item=$item");
-        widget.cat.value = item['id'];
+        widget.cat.value = item.id;
         widget.cat.notifyListeners();
         setState(() {
-          selectedCat = item['id'];
+          selectedCat = item.id;
         });
         print("selectCat=$selectedCat");
       },
-      selected: item['id'] == selectedCat,
+      selected: item.id == selectedCat,
     );
   }
 }
 
 class CategoryListView extends StatefulWidget {
-  CategoryListView(cat) {
+  CategoryListView(cat, food) {
     this.cat = cat;
+    this.food = food;
   }
   CatValueNotifierData cat;
+  Food food;
 
   @override
   State<StatefulWidget> createState() {
-    return CategoryListViewSate();
+    return CategoryListViewSate(food);
   }
 }
