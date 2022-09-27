@@ -2,16 +2,38 @@ import 'dart:convert';
 
 import 'package:file_selector/file_selector.dart';
 import "dart:io";
-import '../mock/food.dart' as defaultFood;
+import 'package:flutter/services.dart' show rootBundle;
 
 class Food {
   Food({this.category, this.list});
-  List<FoodItem> list;
+  List<Item> list;
   List<CategoryItem> category;
+  factory Food.fromJson(Map<String, dynamic> json) {
+    List<dynamic> itemJsonArray = json["list"].toList();
+    List<dynamic> categoryItemJsonArray = json["category"].toList();
+    List<Item> items = [];
+    List<CategoryItem> categoryItems = [];
+    for (var e in itemJsonArray) {
+      var item = Item.fromJson(e);
+      items.add(item);
+    }
+    for (var e in categoryItemJsonArray) {
+      var c = CategoryItem.fromJson(e);
+      categoryItems.add(c);
+    }
+    return Food(list: items, category: categoryItems);
+  }
 }
 
-class FoodItem {
-  FoodItem({this.title, this.price, this.catId, this.id});
+class Item {
+  Item({this.title, this.price, this.catId, this.id});
+  factory Item.fromJson(Map<String, dynamic> json) {
+    return Item(
+        id: json["id"] as int,
+        price: json["price"].toDouble(),
+        catId: json["catId"] as int,
+        title: json["title"] as String);
+  }
   String title;
   double price;
   int catId;
@@ -20,18 +42,20 @@ class FoodItem {
 
 class CategoryItem {
   CategoryItem({this.name, this.id});
+  factory CategoryItem.fromJson(Map<String, dynamic> e) {
+    return CategoryItem(id: e["id"] as int, name: e["name"] as String);
+  }
   String name;
   int id;
 }
 
 Future<Food> loadFood(XFile xFile) async {
   String content = await xFile.readAsString();
-  Food f = null;
-  f = jsonDecode(content);
+  Food f = jsonDecode(content);
   return f;
 }
 
-SaveFood(Food food) async {
+saveFood(Food food) async {
   String content = jsonEncode(food);
   File f = new File('/tmp/config.json');
   var writer = f.openWrite();
@@ -45,6 +69,18 @@ Future<Food> getFood() async {
     Food food = await loadFood(file);
     return food;
   } catch (e) {
-    return Food(category: defaultFood.category, list: defaultFood.list);
+    String content = await rootBundle.loadString('assets/images/food.json');
+    return Food.fromJson(jsonDecode(content));
   }
+}
+
+class OrderFood {
+  OrderFood(
+      {this.id, this.title, this.count, this.price, this.widget, this.content});
+  int id;
+  String title;
+  int count;
+  double price;
+  String widget;
+  String content;
 }
