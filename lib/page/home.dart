@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_app2/data/entity/order.dart';
 import 'package:flutter_app2/model/food.dart';
+import 'package:flutter_app2/page/cat_editor.dart';
+import 'package:flutter_app2/page/food_menu_editor.dart';
 import 'package:flutter_app2/widget/category.dart';
 import 'package:flutter_app2/widget/food_list.dart';
 import 'dart:convert';
@@ -199,9 +201,9 @@ class _MyHomePageState extends State<MyHomePage> {
               itemBuilder: (BuildContext context) => <PopupMenuItem<String>>[
                 this.SelectView(Icons.settings, '打印设置', 'print'),
                 this.SelectView(Icons.category, '添加分类', 'cat'),
-                this.SelectView(Icons.menu_book, '设置菜名', 'menu'),
-                this.SelectView(Icons.import_export, '导入', 'import'),
-                this.SelectView(Icons.import_export, '导出', 'export'),
+                this.SelectView(Icons.menu_book, '编辑菜单', 'menu'),
+                this.SelectView(Icons.import_export, '导入菜单', 'import'),
+                this.SelectView(Icons.import_export, '导出菜单', 'export'),
               ],
               onSelected: (String action) {
                 // 点击选项的时候
@@ -212,6 +214,13 @@ class _MyHomePageState extends State<MyHomePage> {
                   case 'cat':
                     break;
                   case 'menu':
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (context) => CategoryEditor(
+                                foodWatcher: widget.food,
+                              )),
+                    );
+
                     break;
                   case 'import':
                     showImport(context);
