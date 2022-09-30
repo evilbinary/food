@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_app2/model/food.dart';
 
 class FoodMenuEditor extends StatefulWidget {
@@ -29,10 +26,6 @@ class _FoodMenuEditorState extends State<FoodMenuEditor> {
     return Scaffold(
       appBar: AppBar(
         title: Text('菜单编辑'),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
       ),
       body: ListView(
         children: cats,

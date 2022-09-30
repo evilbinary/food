@@ -115,4 +115,21 @@ class FoodValueNotifierData extends ValueNotifier<FoodMenu> {
   update(FoodMenu menu) {
     value = menu;
   }
+
+  addCategory(String name) {
+    List<int> ids = value.category.map((e) => e.id).toList();
+    int n = 0;
+    // 找到一个能用的 ID
+    for (; true; n++) {
+      if (ids.indexOf(n) < 0) {
+        break;
+      }
+    }
+    value.category.add(CategoryItem(id: n, name: name));
+  }
+
+  removeCategory(id) {
+    value.category =
+        value.category.where((element) => element.id != id).toList();
+  }
 }
