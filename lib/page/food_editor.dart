@@ -14,7 +14,11 @@ class _FoodEditorState extends State<FoodEditor> {
     return Scaffold(
       appBar: AppBar(
         title: Text('编辑菜品'),
-        actions: [IconButton(onPressed: () {}, icon: Icon(Icons.add))],
+        actions: [IconButton(onPressed: () {
+          showDialog(context: context, builder: (BuildContext context){
+            return AlertDialog(title: Text('edit'),content: _FoodEditor(Item()));
+          });
+        }, icon: Icon(Icons.add))],
       ),
       body: createFoodViews(),
       bottomNavigationBar: Container(
@@ -38,6 +42,14 @@ class _FoodEditorState extends State<FoodEditor> {
           ListTile tile = ListTile(
               leading: CircleAvatar(child: Text(cat.name[0])),
               title: Text("${food.title}(¥${food.price})"),
+              onTap: () {
+                showDialog<Item>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                          title: Text('edit'), content: _FoodEditor(food));
+                    });
+              },
               trailing: IconButton(
                 onPressed: () async {},
                 icon: Icon(Icons.delete),
@@ -48,5 +60,42 @@ class _FoodEditorState extends State<FoodEditor> {
       }
     }
     return ListView(children: list);
+  }
+}
+
+class _FoodEditor extends StatefulWidget {
+  _FoodEditor(this.food);
+  Item food;
+  @override
+  State<StatefulWidget> createState() {
+    return __FoodEditorState();
+  }
+}
+
+class __FoodEditorState extends State<_FoodEditor> {
+  @override
+  Widget build(BuildContext context) {
+    TextEditingController priceController =
+        TextEditingController(text: widget.food.price != null ? widget.food.price.toString() : "");
+    TextEditingController nameController =
+        TextEditingController(text: widget.food.title);
+
+    return Form(
+        child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        TextFormField(controller: priceController),
+        TextFormField(
+          controller: nameController,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            TextButton(onPressed: () {}, child: Text('yes')),
+            TextButton(onPressed: () {}, child: Text('no'))
+          ],
+        )
+      ],
+    ));
   }
 }

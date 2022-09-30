@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app2/model/food.dart';
 import 'package:path_provider/path_provider.dart';
 import 'data/database.dart';
-import 'page/login.dart';
 import 'page/home.dart';
 import 'package:path/path.dart';
 
@@ -59,7 +58,6 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       routes: <String, WidgetBuilder>{
-        "login": (context) => LoginPage(),
         // "themes": (context) => ThemeChangeRoute(),
         // "language": (context) => LanguageRoute(),
       },
