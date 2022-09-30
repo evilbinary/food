@@ -17,6 +17,16 @@ class _FoodEditorState extends State<FoodEditor> {
         actions: [IconButton(onPressed: () {}, icon: Icon(Icons.add))],
       ),
       body: createFoodViews(),
+      bottomNavigationBar: Container(
+        color: Colors.black54,
+        height: 35,
+        child: TextButton(
+            onPressed: () {},
+            child: Text(
+              '保存',
+              style: TextStyle(color: Theme.of(context).primaryColor),
+            )),
+      ),
     );
   }
 
