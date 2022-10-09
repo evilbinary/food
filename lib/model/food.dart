@@ -4,7 +4,6 @@ import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import "dart:io";
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:get/state_manager.dart';
 
 class FoodMenu {
   FoodMenu({this.category, this.list});
@@ -112,7 +111,7 @@ class OrderFood extends Item {
 
 class FoodValueNotifierData extends ValueNotifier<FoodMenu> {
   FoodValueNotifierData(value) : super(value);
-  update(FoodMenu menu) {
+  reload(FoodMenu menu) {
     value = menu;
   }
 
@@ -131,5 +130,14 @@ class FoodValueNotifierData extends ValueNotifier<FoodMenu> {
   removeCategory(id) {
     value.category =
         value.category.where((element) => element.id != id).toList();
+  }
+
+  updateCategory(int id, String cat) {
+    for (var i = 0; i < value.category.length; i++) {
+      if (id == value.category[i].id) {
+        value.category[i].name = cat;
+        break;
+      }
+    }
   }
 }

@@ -348,7 +348,7 @@ class _MyHomePageState extends State<MyHomePage> {
     try {
       FoodMenu food = await loadFood(xf);
       // 更新菜品
-      widget.food.update(food);
+      widget.food.reload(food);
     } catch (e) {
       showDialog<void>(
           context: context,

@@ -10,15 +10,16 @@ class CategoryEditor extends StatefulWidget {
 }
 
 class _CategoryEditorState extends State<CategoryEditor> {
-  addCategory(BuildContext context) async {
-    GlobalKey _key = GlobalKey<FormState>();
+  editCategory(BuildContext context, String cat) async {
     TextEditingController _controller = TextEditingController();
-
+    if (cat != null) {
+      _controller.text = cat;
+    }
     return await showDialog<String>(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('添加分类'),
+            title: Text('编辑分类'),
             content: TextField(
               controller: _controller,
               decoration: InputDecoration(hintText: '请输入类型'),
@@ -93,8 +94,8 @@ class _CategoryEditorState extends State<CategoryEditor> {
         actions: <Widget>[
           IconButton(
               onPressed: () async {
-                String cat = await addCategory(context);
-                if (cat?.length > 0) {
+                String cat = await editCategory(context, null);
+                if (cat.length > 0) {
                   setState(() {
                     widget.foodWatcher.addCategory(cat);
                   });
@@ -111,14 +112,20 @@ class _CategoryEditorState extends State<CategoryEditor> {
                     e.name,
                     style: TextStyle(color: Colors.black, fontSize: 30),
                   ),
+                  onTap: () async {
+                    String cat = await editCategory(context, e.name);
+                    if (cat != null && cat.length > 0) {
+                      setState(() {
+                        widget.foodWatcher.updateCategory(e.id, cat);
+                      });
+                    }
+                  },
                   trailing: IconButton(
                     onPressed: () async {
                       bool remove = await confirmRemoveCat(context, e.name);
                       if (remove) {
-                        print("删除 ${e.name}");
                         widget.foodWatcher.removeCategory(e.id);
                       }
-                      ;
                     },
                     icon: Icon(Icons.delete),
                     iconSize: 30,
