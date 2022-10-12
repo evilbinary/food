@@ -173,6 +173,15 @@ class _MyHomePageState extends State<MyHomePage> {
     print("onMessage=>$message");
   }
 
+  void refresh() {
+    print('refresh');
+    foodListView =
+        FoodListView(catValueNotifierData, orderValueNotifierData, widget.food);
+
+    categoryListView = CategoryListView(catValueNotifierData, widget.food);
+    catValueNotifierData.notifyListeners();
+  }
+
   @override
   Widget build(BuildContext context) {
     print("_MyHomePageState build ");
@@ -212,20 +221,24 @@ class _MyHomePageState extends State<MyHomePage> {
                     showPrint();
                     break;
                   case 'cat':
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                          builder: (context) => FoodEditor(
-                                foodWatcher: widget.food,
-                              )),
-                    );
+                    Navigator.of(context)
+                        .push(
+                          MaterialPageRoute(
+                              builder: (context) => FoodEditor(
+                                    foodWatcher: widget.food,
+                                  )),
+                        )
+                        .then((value) => {refresh()});
                     break;
                   case 'menu':
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                          builder: (context) => CategoryEditor(
-                                foodWatcher: widget.food,
-                              )),
-                    );
+                    Navigator.of(context)
+                        .push(
+                          MaterialPageRoute(
+                              builder: (context) => CategoryEditor(
+                                    foodWatcher: widget.food,
+                                  )),
+                        )
+                        .then((value) => {refresh()});
 
                     break;
                   case 'import':
