@@ -140,4 +140,40 @@ class FoodValueNotifierData extends ValueNotifier<FoodMenu> {
       }
     }
   }
+
+  removeFood(int id) {
+    value.list = value.list.where((element) => element.id != id).toList();
+  }
+
+  addFood(String title, int catID, double price) {
+    List<int> ids = value.list.map((e) => e.id).toList();
+    int n = 0;
+    // 找到一个能用的 ID
+    for (; true; n++) {
+      if (ids.indexOf(n) < 0) {
+        break;
+      }
+    }
+    value.list.add(Item(title: title, price: price, catId: catID, id: n));
+  }
+
+  updateFood(Item food) {
+    for (var i = 0; i < value.list.length; i++) {
+      if (value.list[i].id == food.id) {
+        value.list[i] = food;
+      }
+    }
+  }
+
+  int findFoodCatID(Item food) {
+    if (food == null) {
+      return null;
+    }
+    for (var i = 0; i < value.list.length; i++) {
+      if (food.id == value.list[i].id) {
+        return value.list[i].catId;
+      }
+    }
+    return null;
+  }
 }

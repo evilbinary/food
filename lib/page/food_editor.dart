@@ -12,41 +12,93 @@ class _FoodEditorState extends State<FoodEditor> {
   editFood(BuildContext context, Item food) async {
     TextEditingController _foodNameController = TextEditingController();
     TextEditingController _foodPriceController = TextEditingController();
-
+    int catId;
     if (food != null) {
       _foodNameController.text = food.title;
       _foodPriceController.text = food.price.toString();
+      catId = food.catId;
     }
+    GlobalKey<FormState> formKey = GlobalKey<FormState>();
     return await showDialog<String>(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text('编辑菜品'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: _foodNameController,
-                  decoration: InputDecoration(hintText: '请输入菜名'),
-                ),
-                TextField(
-                  controller: _foodPriceController,
-                  decoration: InputDecoration(hintText: '请输入价格'),
-                )
-              ],
+            content: Form(
+              key: formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextFormField(
+                    controller: _foodNameController,
+                    validator: (value) {
+                      if (value == null || value.length == 0) {
+                        return "菜名不能为空";
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                        hintText: '请输入菜名',
+                        prefix: Padding(
+                          child: Text('菜名'),
+                          padding: EdgeInsets.only(right: 10),
+                        )),
+                  ),
+                  TextFormField(
+                    controller: _foodPriceController,
+                    validator: (value) {
+                      if (double.tryParse(value) == null) {
+                        return '请输入合法的数字';
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                        hintText: '请输入价格',
+                        prefix: Padding(
+                          child: Text('价格'),
+                          padding: EdgeInsets.only(right: 10),
+                        )),
+                  ),
+                  DropdownButtonFormField(
+                      validator: ((value) {
+                        if (value == null) {
+                          return '必须选择一个菜品分类';
+                        }
+                        return null;
+                      }),
+                      value: widget.foodWatcher.findFoodCatID(food),
+                      items: widget.foodWatcher.value.category
+                          .map((e) => DropdownMenuItem(
+                                child: Text(e.name),
+                                value: e.id,
+                              ))
+                          .toList(),
+                      onChanged: (v) {
+                        catId = v;
+                      })
+                ],
+              ),
             ),
             actions: [
               TextButton(
                   onPressed: () {
-                    if (_foodNameController.text.isEmpty) {
-                      showDialog(
-                          context: context,
-                          builder: (BuildContext ctx) {
-                            return AlertDialog(
-                              title: Text('菜不能为空'),
-                            );
-                          });
+                    if (!formKey.currentState.validate()) {
+                      return;
                     }
+                    // 添加新菜
+                    if (food.id == null) {
+                      widget.foodWatcher.addFood(_foodNameController.text,
+                          catId, double.tryParse(_foodPriceController.text));
+                    } else {
+                      // 更新菜品配置
+                      food.catId = catId;
+                      food.price = double.tryParse(_foodPriceController.text);
+                      food.title = _foodNameController.text;
+                      widget.foodWatcher.updateFood(food);
+                    }
+                    setState(() {
+                      Navigator.of(context).pop();
+                    });
                   },
                   child: Text('确认')),
               TextButton(
@@ -97,10 +149,14 @@ class _FoodEditorState extends State<FoodEditor> {
               leading: CircleAvatar(child: Text(cat.name[0])),
               title: Text("${food.title}(¥${food.price})"),
               onTap: () {
-                print('---');
+                editFood(context, food);
               },
               trailing: IconButton(
-                onPressed: () async {},
+                onPressed: () async {
+                  setState(() {
+                    widget.foodWatcher.removeFood(food.id);
+                  });
+                },
                 icon: Icon(Icons.delete),
                 iconSize: 30,
               ));
@@ -109,5 +165,42 @@ class _FoodEditorState extends State<FoodEditor> {
       }
     }
     return ListView(children: list);
+  }
+}
+
+class _FoodEditor extends StatefulWidget {
+  _FoodEditor(this.food);
+  Item food;
+  @override
+  State<StatefulWidget> createState() {
+    return __FoodEditorState();
+  }
+}
+
+class __FoodEditorState extends State<_FoodEditor> {
+  @override
+  Widget build(BuildContext context) {
+    TextEditingController priceController = TextEditingController(
+        text: widget.food.price != null ? widget.food.price.toString() : "");
+    TextEditingController nameController =
+        TextEditingController(text: widget.food.title);
+
+    return Form(
+        child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        TextFormField(controller: priceController),
+        TextFormField(
+          controller: nameController,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            TextButton(onPressed: () {}, child: Text('yes')),
+            TextButton(onPressed: () {}, child: Text('no'))
+          ],
+        )
+      ],
+    ));
   }
 }
