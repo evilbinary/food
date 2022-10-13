@@ -24,35 +24,6 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class CustomButton extends StatelessWidget {
-  final String label;
-
-  CustomButton(this.label);
-
-  @override
-  Widget build(BuildContext context) {
-    print('ee CustomButton $context');
-    return ElevatedButton(
-        onPressed: () {
-          print("hello");
-        },
-        child: Text(label));
-  }
-}
-
-// 返回每个隐藏的菜单项
-SelectView(IconData icon, String text, String id) {
-  return new PopupMenuItem<String>(
-      value: id,
-      child: new Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
-          new Icon(icon, color: Colors.blue),
-          new Text(text),
-        ],
-      ));
-}
-
 class _MyHomePageState extends State<MyHomePage> {
   double _total = 0;
   int _count = 0;
@@ -152,7 +123,7 @@ class _MyHomePageState extends State<MyHomePage> {
       'org.evilbinary.flutter/message', StringCodec());
 
   // 返回每个隐藏的菜单项
-  SelectView(IconData icon, String text, String id) {
+  selectView(IconData icon, String text, String id) {
     return new PopupMenuItem<String>(
         value: id,
         child: new Row(
@@ -206,11 +177,11 @@ class _MyHomePageState extends State<MyHomePage> {
             // 隐藏的菜单
             new PopupMenuButton<String>(
               itemBuilder: (BuildContext context) => <PopupMenuItem<String>>[
-                this.SelectView(Icons.settings, '打印设置', 'print'),
-                this.SelectView(Icons.category, '编辑菜品', 'cat'),
-                this.SelectView(Icons.menu_book, '编辑分类', 'menu'),
-                this.SelectView(Icons.import_export, '导入菜单', 'import'),
-                this.SelectView(Icons.import_export, '导出菜单', 'export'),
+                this.selectView(Icons.settings, '打印设置', 'print'),
+                this.selectView(Icons.category, '编辑菜品', 'cat'),
+                this.selectView(Icons.menu_book, '编辑分类', 'menu'),
+                this.selectView(Icons.import_export, '导入菜单', 'import'),
+                this.selectView(Icons.import_export, '导出菜单', 'export'),
               ],
               onSelected: (String action) {
                 // 点击选项的时候
