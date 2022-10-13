@@ -100,14 +100,15 @@ Future<FoodMenu> getFood() async {
 }
 
 class OrderFood extends Item {
-  OrderFood(
-      {this.id, this.title, this.count, this.price, this.widget, this.content});
-  int id;
-  String title;
+  OrderFood({id, title, this.count, price, widget, content})
+      : super(
+            id: id,
+            title: title,
+            price: price,
+            widget: widget,
+            content: content);
+
   int count;
-  double price;
-  String widget;
-  String content;
 }
 
 class FoodValueNotifierData extends ValueNotifier<FoodMenu> {
