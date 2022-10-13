@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_app2/data/entity/order.dart';
 import 'package:flutter_app2/model/food.dart';
+import 'package:flutter_app2/page/cat_editor.dart';
+import 'package:flutter_app2/page/food_editor.dart';
 import 'package:flutter_app2/widget/category.dart';
 import 'package:flutter_app2/widget/food_list.dart';
 import 'dart:convert';
@@ -20,35 +22,6 @@ class MyHomePage extends StatefulWidget {
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
-}
-
-class CustomButton extends StatelessWidget {
-  final String label;
-
-  CustomButton(this.label);
-
-  @override
-  Widget build(BuildContext context) {
-    print('ee CustomButton $context');
-    return ElevatedButton(
-        onPressed: () {
-          print("hello");
-        },
-        child: Text(label));
-  }
-}
-
-// 返回每个隐藏的菜单项
-SelectView(IconData icon, String text, String id) {
-  return new PopupMenuItem<String>(
-      value: id,
-      child: new Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
-          new Icon(icon, color: Colors.blue),
-          new Text(text),
-        ],
-      ));
 }
 
 class _MyHomePageState extends State<MyHomePage> {
@@ -139,7 +112,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   CatValueNotifierData catValueNotifierData = CatValueNotifierData(1);
   OrderValueNotifierData orderValueNotifierData =
-      OrderValueNotifierData(List<OrderFood>());
+      OrderValueNotifierData(<OrderFood>[]);
 
   FoodListView foodListView;
   CategoryListView categoryListView;
@@ -150,7 +123,7 @@ class _MyHomePageState extends State<MyHomePage> {
       'org.evilbinary.flutter/message', StringCodec());
 
   // 返回每个隐藏的菜单项
-  SelectView(IconData icon, String text, String id) {
+  selectView(IconData icon, String text, String id) {
     return new PopupMenuItem<String>(
         value: id,
         child: new Row(
@@ -171,6 +144,14 @@ class _MyHomePageState extends State<MyHomePage> {
     print("onMessage=>$message");
   }
 
+  void refresh() {
+    setState(() {
+      foodListView = FoodListView(
+          catValueNotifierData, orderValueNotifierData, widget.food);
+      categoryListView = CategoryListView(catValueNotifierData, widget.food);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     print("_MyHomePageState build ");
@@ -186,7 +167,6 @@ class _MyHomePageState extends State<MyHomePage> {
       categoryListView = CategoryListView(catValueNotifierData, widget.food);
     }
     catValueNotifierData.notifyListeners();
-    print(widget.food.value.category.length);
     ThemeData themeData = Theme.of(context);
     return Scaffold(
         appBar: AppBar(
@@ -197,11 +177,11 @@ class _MyHomePageState extends State<MyHomePage> {
             // 隐藏的菜单
             new PopupMenuButton<String>(
               itemBuilder: (BuildContext context) => <PopupMenuItem<String>>[
-                this.SelectView(Icons.settings, '打印设置', 'print'),
-                this.SelectView(Icons.category, '添加分类', 'cat'),
-                this.SelectView(Icons.menu_book, '设置菜名', 'menu'),
-                this.SelectView(Icons.import_export, '导入', 'import'),
-                this.SelectView(Icons.import_export, '导出', 'export'),
+                this.selectView(Icons.settings, '打印设置', 'print'),
+                this.selectView(Icons.category, '编辑菜品', 'cat'),
+                this.selectView(Icons.menu_book, '编辑分类', 'menu'),
+                this.selectView(Icons.import_export, '导入菜单', 'import'),
+                this.selectView(Icons.import_export, '导出菜单', 'export'),
               ],
               onSelected: (String action) {
                 // 点击选项的时候
@@ -210,8 +190,25 @@ class _MyHomePageState extends State<MyHomePage> {
                     showPrint();
                     break;
                   case 'cat':
+                    Navigator.of(context)
+                        .push(
+                          MaterialPageRoute(
+                              builder: (context) => FoodEditor(
+                                    foodWatcher: widget.food,
+                                  )),
+                        )
+                        .then((value) => {refresh()});
                     break;
                   case 'menu':
+                    Navigator.of(context)
+                        .push(
+                          MaterialPageRoute(
+                              builder: (context) => CategoryEditor(
+                                    foodWatcher: widget.food,
+                                  )),
+                        )
+                        .then((value) => {refresh()});
+
                     break;
                   case 'import':
                     showImport(context);
@@ -259,7 +256,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   flex: 2,
                   child: new GestureDetector(
                       onTap: () {
-                        showDialog<Null>(
+                        showDialog<void>(
                           context: context,
                           builder: (BuildContext context) {
                             return new SimpleDialog(
@@ -267,9 +264,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               children: _buildOrderPreview(),
                             );
                           },
-                        ).then((val) {
-                          print(val);
-                        });
+                        ).then((val) {});
                       },
                       child: Container(
                         margin: EdgeInsets.only(left: 10),
@@ -335,16 +330,16 @@ class _MyHomePageState extends State<MyHomePage> {
     try {
       FoodMenu food = await loadFood(xf);
       // 更新菜品
-      widget.food.update(food);
+      widget.food.reload(food);
     } catch (e) {
-      showDialog<Null>(
+      showDialog<void>(
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(title: Text('导入失败，请检查配置文件'));
           });
       return;
     }
-    showDialog<Null>(
+    showDialog<void>(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(title: Text('导入成功'));
@@ -357,7 +352,7 @@ class _MyHomePageState extends State<MyHomePage> {
     String content = jsonEncode(widget.food.value);
     File file = File(path);
     file.writeAsString(content);
-    showDialog<Null>(
+    showDialog<void>(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(title: Text('导出成功'));

@@ -45,15 +45,6 @@ class _FoodItemStae extends State<FoodItem> {
     return Flex(
       direction: Axis.horizontal,
       children: <Widget>[
-        // Expanded(
-        //   flex: 1,
-        //   child: Image.asset(
-        //     "assets/images/food.png",
-        //     fit: BoxFit.cover,
-        //     width: 60,
-        //     height: 60,
-        //   ),
-        // ),
         Expanded(
           flex: 2,
           child: Container(

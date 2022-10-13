@@ -60,7 +60,6 @@ class _FoodListViewState extends State<FoodListView> {
 
   @override
   Widget build(BuildContext context) {
-    widget.cat.addListener(_handleValueChanged);
     print("_FoodListViewState build");
     return ListView(
       shrinkWrap: true,
@@ -70,7 +69,6 @@ class _FoodListViewState extends State<FoodListView> {
   }
 
   _handleValueChanged() {
-    print("_FoodListViewState _handleValueChanged ${widget.cat.value}");
     setState(() {
       widget.foods = widget.getFoodList(widget.cat.value);
     });
@@ -78,15 +76,15 @@ class _FoodListViewState extends State<FoodListView> {
 
   @override
   void initState() {
-    widget.food.addListener(() {
-      setState(() {});
-    });
     super.initState();
+    widget.cat.addListener(_handleValueChanged);
+    widget.food.addListener(_handleValueChanged);
   }
 
   @override
   dispose() {
     widget.cat.removeListener(_handleValueChanged);
+    widget.food.removeListener(_handleValueChanged);
     super.dispose();
   }
 }

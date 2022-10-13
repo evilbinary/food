@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:floor/floor.dart';
@@ -6,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app2/model/food.dart';
 import 'package:path_provider/path_provider.dart';
 import 'data/database.dart';
-import 'page/login.dart';
 import 'page/home.dart';
 import 'package:path/path.dart';
 
@@ -16,7 +14,8 @@ Future<AppDatabase> buildDataBase() async {
     appDocDir = await getExternalStorageDirectory();
   } else {
     // for linux
-    appDocDir = Directory("/tmp");
+    appDocDir = await Directory("${Platform.environment['HOME']}/.config/food/")
+        .create(recursive: true);
   }
   var databasesPath = appDocDir.path;
   var path = join(databasesPath, 'food2.db');
@@ -59,7 +58,6 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       routes: <String, WidgetBuilder>{
-        "login": (context) => LoginPage(),
         // "themes": (context) => ThemeChangeRoute(),
         // "language": (context) => LanguageRoute(),
       },
