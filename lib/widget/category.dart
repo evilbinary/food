@@ -37,7 +37,6 @@ class CategoryListViewSate extends State<CategoryListView> {
       ),
       // selected: ,
       onTap: () {
-        print("item=$item");
         widget.cat.value = item.id;
         widget.cat.notifyListeners();
         setState(() {

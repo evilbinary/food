@@ -79,9 +79,9 @@ Future<FoodMenu> loadFood(XFile xFile) async {
   return f;
 }
 
-saveFood(FoodMenu menu) async {
+void saveFood(FoodMenu menu) async {
   String content = jsonEncode(menu);
-  File f = new File('/tmp/config.json');
+  File f = new File("${Platform.environment['HOME']}/.config/food/config.json");
   var writer = f.openWrite();
   writer.write(content);
   await writer.close();
@@ -89,7 +89,8 @@ saveFood(FoodMenu menu) async {
 
 Future<FoodMenu> getFood() async {
   try {
-    XFile file = XFile("/tmp/config.json");
+    XFile file =
+        XFile("${Platform.environment['HOME']}/.config/food/config.json");
     FoodMenu menu = await loadFood(file);
     return menu;
   } catch (e) {

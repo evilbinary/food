@@ -81,9 +81,6 @@ class _CategoryEditorState extends State<CategoryEditor> {
   @override
   void initState() {
     super.initState();
-    widget.foodWatcher.addListener(() {
-      setState(() {});
-    });
   }
 
   @override
@@ -135,7 +132,12 @@ class _CategoryEditorState extends State<CategoryEditor> {
         color: Colors.black54,
         height: 35,
         child: TextButton(
-            onPressed: () {},
+            onPressed: () async {
+              saveFood(widget.foodWatcher.value);
+              widget.foodWatcher.value = await getFood();
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text('保存成功')));
+            },
             child: Text(
               '保存',
               style: TextStyle(color: Theme.of(context).primaryColor),

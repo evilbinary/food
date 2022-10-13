@@ -86,7 +86,7 @@ class _FoodEditorState extends State<FoodEditor> {
                       return;
                     }
                     // 添加新菜
-                    if (food.id == null) {
+                    if (food == null || food.id == null) {
                       widget.foodWatcher.addFood(_foodNameController.text,
                           catId, double.tryParse(_foodPriceController.text));
                     } else {
@@ -131,7 +131,12 @@ class _FoodEditorState extends State<FoodEditor> {
         color: Colors.black54,
         height: 35,
         child: TextButton(
-            onPressed: () {},
+            onPressed: () async {
+              saveFood(widget.foodWatcher.value);
+              widget.foodWatcher.value = await getFood();
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text('保存成功')));
+            },
             child: Text(
               '保存',
               style: TextStyle(color: Theme.of(context).primaryColor),

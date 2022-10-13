@@ -14,7 +14,8 @@ Future<AppDatabase> buildDataBase() async {
     appDocDir = await getExternalStorageDirectory();
   } else {
     // for linux
-    appDocDir = Directory("/tmp");
+    appDocDir = await Directory("${Platform.environment['HOME']}/.config/food/")
+        .create(recursive: true);
   }
   var databasesPath = appDocDir.path;
   var path = join(databasesPath, 'food2.db');

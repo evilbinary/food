@@ -141,7 +141,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   CatValueNotifierData catValueNotifierData = CatValueNotifierData(1);
   OrderValueNotifierData orderValueNotifierData =
-      OrderValueNotifierData(List<OrderFood>());
+      OrderValueNotifierData(<OrderFood>[]);
 
   FoodListView foodListView;
   CategoryListView categoryListView;
@@ -174,12 +174,11 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void refresh() {
-    print('refresh');
-    foodListView =
-        FoodListView(catValueNotifierData, orderValueNotifierData, widget.food);
-
-    categoryListView = CategoryListView(catValueNotifierData, widget.food);
-    catValueNotifierData.notifyListeners();
+    setState(() {
+      foodListView = FoodListView(
+          catValueNotifierData, orderValueNotifierData, widget.food);
+      categoryListView = CategoryListView(catValueNotifierData, widget.food);
+    });
   }
 
   @override
@@ -197,7 +196,6 @@ class _MyHomePageState extends State<MyHomePage> {
       categoryListView = CategoryListView(catValueNotifierData, widget.food);
     }
     catValueNotifierData.notifyListeners();
-    print(widget.food.value.category.length);
     ThemeData themeData = Theme.of(context);
     return Scaffold(
         appBar: AppBar(
