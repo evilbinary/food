@@ -10,6 +10,7 @@ import net.posprinter.posprinterface.IMyBinder;
 import net.posprinter.service.PosprinterService;
 
 import io.flutter.app.FlutterApplication;
+import io.flutter.plugins.GeneratedPluginRegistrant;
 
 /**
  * 作者:evilbinary on 2020/11/14.

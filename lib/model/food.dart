@@ -4,6 +4,7 @@ import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import "dart:io";
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:path_provider/path_provider.dart';
 
 class FoodMenu {
   FoodMenu({this.category, this.list});
@@ -79,9 +80,15 @@ Future<FoodMenu> loadFood(XFile xFile) async {
   return f;
 }
 
+Future<Directory> getPath() async {
+  Directory path=await getExternalStorageDirectory();
+  return path;
+}
+
 void saveFood(FoodMenu menu) async {
   String content = jsonEncode(menu);
-  File f = new File("${Platform.environment['HOME']}/.config/food/config.json");
+  Directory path=await getPath();
+  File f = new File("${path.path}/food.json");
   var writer = f.openWrite();
   writer.write(content);
   await writer.close();
@@ -89,8 +96,9 @@ void saveFood(FoodMenu menu) async {
 
 Future<FoodMenu> getFood() async {
   try {
+    Directory path=await getPath();
     XFile file =
-        XFile("${Platform.environment['HOME']}/.config/food/config.json");
+        XFile("${path.path}/food.json");
     FoodMenu menu = await loadFood(file);
     return menu;
   } catch (e) {

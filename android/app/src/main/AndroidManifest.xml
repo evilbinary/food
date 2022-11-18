@@ -19,7 +19,10 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.hardware.usb.UsbAccessory" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <application
+        android:requestLegacyExternalStorage="true"
         android:name="org.evilbinary.food.FoodApplication"
         android:label="点餐"
         android:icon="@mipmap/ic_launcher">
@@ -51,7 +54,22 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+
+
+
         </activity>
+        <!--权限-->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true"
+            tools:replace="android:authorities">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths"
+                tools:replace="android:resource" />
+        </provider>
 
         <service android:name="net.posprinter.service.PosprinterService" />
         <activity android:name="net.printer.print.ReceiptPrinter.R58Activity" />
@@ -71,5 +89,7 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+
+
     </application>
 </manifest>

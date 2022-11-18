@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:file_selector/file_selector.dart';
+import 'package:file_selector/file_selector.dart';
+import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:food/data/entity/order.dart';
@@ -12,6 +14,8 @@ import 'package:food/widget/food_list.dart';
 import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../data/database.dart';
+import 'package:file_picker/file_picker.dart';
+
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title, this.db, @required this.food})
@@ -322,11 +326,18 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   showImport(BuildContext context) async {
-    XTypeGroup group = XTypeGroup(label: "json", extensions: <String>['json']);
-    XFile xf = await openFile(acceptedTypeGroups: <XTypeGroup>[group]);
-    if (xf == null) {
-      return;
-    }
+    FilePickerResult result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['json', 'txt'],
+    );
+    PlatformFile file = result.files.first;
+    String path = file.path;
+    XFile xf = XFile("${path}");
+    // XTypeGroup group = XTypeGroup(label: "json", extensions: <String>['json']);
+    // XFile xf = await openFile(acceptedTypeGroups: <XTypeGroup>[group]);
+    // if (xf == null) {
+    //   return;
+    // }
     try {
       FoodMenu food = await loadFood(xf);
       // 更新菜品
@@ -347,11 +358,27 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   showExport(BuildContext context) async {
-    XTypeGroup group = XTypeGroup(label: "json", extensions: <String>['json']);
-    String path = await getSavePath(acceptedTypeGroups: <XTypeGroup>[group]);
+    String path=null;
+    // if (Platform.isAndroid || Platform.isIOS)) {
+      // use file_picker plugin
+      String result = await FilePicker.platform.getDirectoryPath();
+      if(result != null) {
+        path=result;
+      } else {
+        // User canceled the picker
+      }
+
+    // }else{
+    //   XTypeGroup group = XTypeGroup(label: "json", extensions: <String>['json']);
+    //   path = await getSavePath(acceptedTypeGroups: <XTypeGroup>[group]);
+    // }
+
     String content = jsonEncode(widget.food.value);
-    File file = File(path);
-    file.writeAsString(content);
+    File file = File("${path}/菜单.json");
+    var writer = file.openWrite();
+    writer.write(content);
+    await writer.close();
+    // file.writeAsString(content);
     showDialog<void>(
         context: context,
         builder: (BuildContext context) {
