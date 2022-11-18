@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:floor/floor.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app2/model/food.dart';
+import 'package:food/model/food.dart';
 import 'package:path_provider/path_provider.dart';
 import 'data/database.dart';
 import 'page/home.dart';

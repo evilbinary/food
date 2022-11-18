@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app2/model/food.dart';
+import 'package:food/model/food.dart';
 
 class CategoryEditor extends StatefulWidget {
   const CategoryEditor({Key key, this.foodWatcher}) : super(key: key);
