@@ -363,7 +363,10 @@ class _MyHomePageState extends State<MyHomePage> {
     try {
       FoodMenu food = await loadFood(xf);
       // 更新菜品
-      // widget..reload(food);
+      this.catValueNotifierData.value =food.category;
+      this.foodValueNotifierData.value=food.list;
+      this.catValueNotifierData.notifyListeners();
+      this.foodValueNotifierData.notifyListeners();
     } catch (e) {
       showDialog<void>(
           context: context,
@@ -395,12 +398,13 @@ class _MyHomePageState extends State<MyHomePage> {
     //   path = await getSavePath(acceptedTypeGroups: <XTypeGroup>[group]);
     // }
 
-    // String content = jsonEncode(widget.food.value);
-    // File file = File("${path}/菜单.json");
-    // var writer = file.openWrite();
-    // writer.write(content);
-    // await writer.close();
-    // file.writeAsString(content);
+    FoodMenu foodMenu=FoodMenu(category: catValueNotifierData.value, list: foodValueNotifierData.value);
+    String content = jsonEncode(foodMenu);
+    File file = File("${path}/菜单.json");
+    var writer = file.openWrite();
+    writer.write(content);
+    await writer.close();
+    file.writeAsString(content);
     showDialog<void>(
         context: context,
         builder: (BuildContext context) {
