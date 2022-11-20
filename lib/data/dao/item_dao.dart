@@ -12,10 +12,10 @@ abstract class ItemDao {
   Stream<Item?> findById(int id);
 
   @insert
-  Future<void> add(Item item);
+  Future<int> add(Item item);
 
   @insert
-  Future<void> adds(List<Item> items);
+  Future<List<int>> adds(List<Item> items);
 
   @update
   Future<int> save(Item item);

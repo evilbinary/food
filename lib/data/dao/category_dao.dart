@@ -12,10 +12,10 @@ abstract class CategoryDao {
   Stream<Category?> findById(int id);
 
   @insert
-  Future<void> add(Category cat);
+  Future<int> add(Category cat);
 
   @insert
-  Future<void> adds(List<Category> cats );
+  Future<List<int>> adds(List<Category> cats );
 
   @update
   Future<int> save(Category cat);

@@ -49,7 +49,7 @@ class CatValueNotifierData extends ValueNotifier<List<Category>> {
   saveAll() async {
     for (var cat in value) {
       if (cat.id == 0 ||cat.id==null) {
-        cat.id = await appDb.categoryDao.save(cat);
+        cat.id = await appDb.categoryDao.add(cat);
       } else {
         await appDb.categoryDao.save(cat);
       }
@@ -109,8 +109,9 @@ class FoodValueNotifierData extends ValueNotifier<List<Item>> {
   saveAll() async {
     for (var item in value) {
       if (item.id == 0 ||item.id==null) {
-        item.id = await appDb.itemDao.save(item);
+        item.id = await appDb.itemDao.add(item);
       } else {
+        var ret=await appDb.itemDao.findById(item.id!);
         await appDb.itemDao.save(item);
       }
     }
