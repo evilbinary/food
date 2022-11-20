@@ -354,7 +354,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
     PlatformFile? file = result?.files.first;
     String? path = file?.path;
-    XFile xf = XFile("${path}");
+    XFile xf = XFile(path!);
     // XTypeGroup group = XTypeGroup(label: "json", extensions: <String>['json']);
     // XFile xf = await openFile(acceptedTypeGroups: <XTypeGroup>[group]);
     // if (xf == null) {
