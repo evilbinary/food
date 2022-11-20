@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:file_selector/file_selector.dart';
@@ -16,13 +17,14 @@ import 'package:fluttertoast/fluttertoast.dart';
 import '../data/database.dart';
 import 'package:file_picker/file_picker.dart';
 
+import '../data/entity/category.dart';
+import '../data/entity/item.dart';
+import '../main.dart';
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title, this.db, @required this.food})
-      : super(key: key);
+  MyHomePage(this.title, this.db, {key}) : super(key: key);
   final String title;
-  AppDatabase db;
-  FoodValueNotifierData food;
+  final AppDatabase db;
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -32,25 +34,28 @@ class _MyHomePageState extends State<MyHomePage> {
   double _total = 0;
   int _count = 0;
 
+  _MyHomePageState();
+
   void _calcTotal() {
     setState(() {
-      if (foodListView.order.value.length > 0) {
-        _total = foodListView.order.value
+      if (foodListView.food.value.length > 0) {
+        _total = foodListView.food.value
             .map((e) => e.price * e.count * 1.0)
             .toList()
             .reduce((a, b) => (a + b));
-        _count = foodListView.order.value
+        _count = foodListView.food.value
             .map((e) => e.count)
             .toList()
             .reduce((a, b) => a + b);
+        print('total $_total count $_count');
       }
     });
   }
 
   void _settle() async {
-    //print("settele ${foodListView.order}");
-    var mark = foodListView.order.value.where((e) => e.widget == 'text');
-    var goods = foodListView.order.value.where((e) => e.count > 0).toList();
+    // print("settele ${foodListView.food}");
+    var mark = foodListView.food.value.where((e) => e.widget == 'text');
+    var goods = foodListView.food.value.where((e) => e.count > 0).toList();
     var printData = {
       "shopName": "萌丫炸鸡汉堡",
       "total": _total,
@@ -61,47 +66,41 @@ class _MyHomePageState extends State<MyHomePage> {
     };
     if (_count > 0) {
       try {
-        Order o = Order(null, _count, _total, jsonEncode(goods),
-            DateTime.now().millisecondsSinceEpoch);
-        this.widget.db.orderDao.add(o);
-        var id = await this
-            .widget
-            .db
-            .database
-            .rawQuery('SELECT last_insert_rowid();')
-            .asStream()
-            .first;
-        o.id = id.first.values.first;
-        printData['no'] = o.id;
+        Order o = Order(printData['shopName'].toString(), _count, _total,
+            jsonEncode(goods));
+        o.content = mark.length <= 0 ? '' : mark.first.content;
+        int no = await this.widget.db.orderDao.add(o);
+        printData['no'] = no;
+        print("printData =$printData");
+
+        _send(printData);
       } catch (ex) {
         _showToast("出错咯，$ex");
       }
-
-      _send(printData);
     } else {
       _showToast("请先选择菜");
     }
-    // foodListView.order.notifyListeners();
-    // catValueNotifierData.notifyListeners();
   }
 
   void _clear() {
     setState(() {
       _total = 0;
       _count = 0;
-      foodListView.order.value.forEach((e) => {e.count = 0, e.content = ''});
+      foodListView.food.value.forEach((e) => {e.count = 0, e.content = ''});
+      foodValueNotifierData.notifyListeners();
       catValueNotifierData.notifyListeners();
-      // foodListView = FoodListView(catValueNotifierData, orderValueNotifierData);
     });
   }
 
   void _send(val) async {
-    String reply = await basicChannel.send(jsonEncode(val));
+    var data = jsonEncode(val);
+    print("send $data");
+    String? reply = await basicChannel.send(data);
     print('ret=>$reply');
     if (reply == "打印成功") {
       _clear();
     }
-    _showToast(reply);
+    _showToast(reply!);
   }
 
   void _showToast(String msg) {
@@ -114,12 +113,19 @@ class _MyHomePageState extends State<MyHomePage> {
         fontSize: 16.0);
   }
 
-  CatValueNotifierData catValueNotifierData = CatValueNotifierData(1);
-  OrderValueNotifierData orderValueNotifierData =
-      OrderValueNotifierData(<OrderFood>[]);
+  late FoodListView foodListView = FoodListView(catSelectValueNotifierData,
+      orderValueNotifierData, foodValueNotifierData);
 
-  FoodListView foodListView;
-  CategoryListView categoryListView;
+  late CategoryListView categoryListView=
+  CategoryListView(catValueNotifierData, catSelectValueNotifierData);
+
+  CatValueNotifierData catValueNotifierData = CatValueNotifierData(<Category>[]);
+  OrderValueNotifierData orderValueNotifierData = OrderValueNotifierData(<Order>[]);
+  FoodValueNotifierData foodValueNotifierData = FoodValueNotifierData(<Item>[]);
+  CatSelectValueNotifierData catSelectValueNotifierData = CatSelectValueNotifierData(1);
+
+  bool isLoaded=false;
+
 
   static const nativeChannel =
       const MethodChannel('org.evilbinary.flutter/native');
@@ -144,33 +150,49 @@ class _MyHomePageState extends State<MyHomePage> {
     await nativeChannel.invokeMethod('startActivity', activity);
   }
 
-  Future<String> onMessage(String message) {
+  Future<String> onMessage(String? message) {
     print("onMessage=>$message");
+    return Future.value(message);
   }
 
   void refresh() {
-    setState(() {
-      foodListView = FoodListView(
-          catValueNotifierData, orderValueNotifierData, widget.food);
-      categoryListView = CategoryListView(catValueNotifierData, widget.food);
-    });
+    // setState(() {
+    //   foodListView = FoodListView(
+    //       catValueNotifierData, orderValueNotifierData, widget.food);
+    //   categoryListView = CategoryListView(catValueNotifierData, widget.food);
+    // });
+  }
+
+  void loadData() async {
+    List<Category> cats = await widget.db.categoryDao.findAll();
+    print("load cats $cats");
+
+    catValueNotifierData.value = cats;
+    catValueNotifierData.notifyListeners();
+
+    List<Item> items = await widget.db.itemDao.findAll();
+    print("load items $items");
+    foodValueNotifierData.value = items;
+    foodValueNotifierData.notifyListeners();
+
+    catSelectValueNotifierData.value = 1;
+    catSelectValueNotifierData.notifyListeners();
+    isLoaded=true;
   }
 
   @override
   Widget build(BuildContext context) {
     print("_MyHomePageState build ");
+
+
     basicChannel.setMessageHandler(onMessage);
     orderValueNotifierData.addListener(() {
       _calcTotal();
     });
-    if (foodListView == null) {
-      foodListView = FoodListView(
-          catValueNotifierData, orderValueNotifierData, widget.food);
+    if(!isLoaded){
+      this.loadData();
     }
-    if (categoryListView == null) {
-      categoryListView = CategoryListView(catValueNotifierData, widget.food);
-    }
-    catValueNotifierData.notifyListeners();
+
     ThemeData themeData = Theme.of(context);
     return Scaffold(
         appBar: AppBar(
@@ -198,7 +220,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         .push(
                           MaterialPageRoute(
                               builder: (context) => FoodEditor(
-                                    foodWatcher: widget.food,
+                                    foodWatcher: foodValueNotifierData,
+                                    catWatcher: catValueNotifierData,
                                   )),
                         )
                         .then((value) => {refresh()});
@@ -207,9 +230,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     Navigator.of(context)
                         .push(
                           MaterialPageRoute(
-                              builder: (context) => CategoryEditor(
-                                    foodWatcher: widget.food,
-                                  )),
+                              builder: (context) =>
+                                  CategoryEditor(catValueNotifierData)),
                         )
                         .then((value) => {refresh()});
 
@@ -300,7 +322,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   List<Widget> _buildOrderPreview() {
-    return foodListView.order.value
+    return foodListView.food.value
         .where((e) => e.count > 0 || e.widget == 'text')
         .map((e) {
       if (e.widget == 'text') {
@@ -326,12 +348,12 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   showImport(BuildContext context) async {
-    FilePickerResult result = await FilePicker.platform.pickFiles(
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['json', 'txt'],
     );
-    PlatformFile file = result.files.first;
-    String path = file.path;
+    PlatformFile? file = result?.files.first;
+    String? path = file?.path;
     XFile xf = XFile("${path}");
     // XTypeGroup group = XTypeGroup(label: "json", extensions: <String>['json']);
     // XFile xf = await openFile(acceptedTypeGroups: <XTypeGroup>[group]);
@@ -341,7 +363,7 @@ class _MyHomePageState extends State<MyHomePage> {
     try {
       FoodMenu food = await loadFood(xf);
       // 更新菜品
-      widget.food.reload(food);
+      // widget..reload(food);
     } catch (e) {
       showDialog<void>(
           context: context,
@@ -358,26 +380,26 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   showExport(BuildContext context) async {
-    String path=null;
+    String path = '';
     // if (Platform.isAndroid || Platform.isIOS)) {
-      // use file_picker plugin
-      String result = await FilePicker.platform.getDirectoryPath();
-      if(result != null) {
-        path=result;
-      } else {
-        // User canceled the picker
-      }
+    // use file_picker plugin
+    String? result = await FilePicker.platform.getDirectoryPath();
+    if (result != null) {
+      path = result;
+    } else {
+      // User canceled the picker
+    }
 
     // }else{
     //   XTypeGroup group = XTypeGroup(label: "json", extensions: <String>['json']);
     //   path = await getSavePath(acceptedTypeGroups: <XTypeGroup>[group]);
     // }
 
-    String content = jsonEncode(widget.food.value);
-    File file = File("${path}/菜单.json");
-    var writer = file.openWrite();
-    writer.write(content);
-    await writer.close();
+    // String content = jsonEncode(widget.food.value);
+    // File file = File("${path}/菜单.json");
+    // var writer = file.openWrite();
+    // writer.write(content);
+    // await writer.close();
     // file.writeAsString(content);
     showDialog<void>(
         context: context,

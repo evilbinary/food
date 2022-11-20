@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:food/model/food.dart';
 // 引入 mock 数据
+import '../data/entity/category.dart';
 import 'food_list.dart';
 
 class CategoryListViewSate extends State<CategoryListView> {
-  CategoryListViewSate();
+  CategoryListViewSate(this.catSelect);
+  CatSelectValueNotifierData catSelect;
   int selectedCat = 1;
   @override
   Widget build(BuildContext context) {
@@ -16,33 +18,34 @@ class CategoryListViewSate extends State<CategoryListView> {
 
   @override
   void initState() {
-    widget.food.addListener(() {
+    widget.cat.addListener(() {
       setState(() {});
     });
     super.initState();
   }
 
   List<Widget> _getCategoryList() {
-    List<Widget> cats = widget.food.value.category.map<Widget>((item) {
+    List<Widget> cats = widget.cat.value.map<Widget>((item) {
       // return CategoryItem(item);
       return _buildItem(item);
     }).toList();
     return cats;
   }
 
-  _buildItem(CategoryItem item) {
+  _buildItem(Category item) {
     return ListTile(
       title: Text(
         item.name,
       ),
       // selected: ,
       onTap: () {
-        widget.cat.value = item.id;
-        widget.cat.notifyListeners();
+        print("selectCat=${item.id}");
+
+        catSelect.value=item.id!;
+        catSelect.notifyListeners();
         setState(() {
-          selectedCat = item.id;
+          selectedCat = item.id!;
         });
-        print("selectCat=$selectedCat");
       },
       selected: item.id == selectedCat,
     );
@@ -50,15 +53,13 @@ class CategoryListViewSate extends State<CategoryListView> {
 }
 
 class CategoryListView extends StatefulWidget {
-  CategoryListView(cat, food) {
-    this.cat = cat;
-    this.food = food;
-  }
+  CategoryListView(this.cat,this.catSelect);
+
   CatValueNotifierData cat;
-  FoodValueNotifierData food;
+  CatSelectValueNotifierData catSelect;
 
   @override
   State<StatefulWidget> createState() {
-    return CategoryListViewSate();
+    return CategoryListViewSate(catSelect);
   }
 }

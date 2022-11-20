@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:food/model/food.dart';
 
+import '../data/entity/category.dart';
+import '../data/entity/item.dart';
+import '../widget/food_list.dart';
+
 class FoodMenuEditor extends StatefulWidget {
-  FoodMenuEditor({Key key, this.foodWatcher}) : super(key: key);
-  FoodValueNotifierData foodWatcher;
+  FoodMenuEditor({required Key key, required this.catWatcher}) : super(key: key);
+  CatValueNotifierData catWatcher;
 
   @override
   State<FoodMenuEditor> createState() => _FoodMenuEditorState();
@@ -13,15 +17,15 @@ class _FoodMenuEditorState extends State<FoodMenuEditor> {
   @override
   void initState() {
     super.initState();
-    widget.foodWatcher.addListener(() {
+    widget.catWatcher.addListener(() {
       setState(() {});
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    List<FoodMenuCatCard> cats = widget.foodWatcher.value.category
-        .map((e) => FoodMenuCatCard(item: e, foodWatcher: widget.foodWatcher))
+    List<FoodMenuCatCard> cats = widget.catWatcher.value
+        .map((e) => FoodMenuCatCard(item: e, catWatcher: widget.catWatcher))
         .toList();
     return Scaffold(
       appBar: AppBar(
@@ -35,9 +39,9 @@ class _FoodMenuEditorState extends State<FoodMenuEditor> {
 }
 
 class FoodMenuCatCard extends StatefulWidget {
-  const FoodMenuCatCard({this.item, this.foodWatcher});
-  final CategoryItem item;
-  final FoodValueNotifierData foodWatcher;
+  const FoodMenuCatCard({required this.item, required this.catWatcher});
+  final Category item;
+  final CatValueNotifierData catWatcher;
   @override
   State<StatefulWidget> createState() {
     return _FoodMenuCatCardState();
@@ -47,11 +51,12 @@ class FoodMenuCatCard extends StatefulWidget {
 class _FoodMenuCatCardState extends State<FoodMenuCatCard> {
   @override
   Widget build(BuildContext context) {
-    List<Item> foods =
-        filterFoodByCatID(widget.item.id, widget.foodWatcher.value);
-    foods = foods != null ? foods : [];
-    List<Widget> foodsForm = foods.map((e) => FoodForm(e)).toList();
+    // List<Item> foods =
+    //     filterFoodByCatID(widget.item.id, widget.catWatcher.value);
+    // foods = foods != null ? foods : [];
+    // List<Widget> foodsForm = foods.map((e) => FoodForm(e)).toList();
 
+    List<Widget> foodsForm=[];
     return Column(
       children: [
         Text(

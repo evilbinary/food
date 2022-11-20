@@ -3,11 +3,13 @@ import 'package:floor/floor.dart';
 @entity
 class Order {
   @PrimaryKey(autoGenerate: true)
-  int id;
-  final int count;
-  final double total;
-  final String goods;
-  final int createTime;
+  int? id;
+  String title;
+  int count;
+  double total;
+  String goods;
+  int createTime;
+  String content;
 
-  Order(this.id,this.count,this.total,this.goods,this.createTime);
+  Order(this.title,this.count,this.total,this.goods,{this.content='',this.createTime=0 });
 }

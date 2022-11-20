@@ -5,11 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:food/model/food.dart';
 import 'package:path_provider/path_provider.dart';
 import 'data/database.dart';
+import 'data/entity/category.dart';
 import 'page/home.dart';
 import 'package:path/path.dart';
 
 Future<AppDatabase> buildDataBase() async {
-  Directory appDocDir;
+  Directory? appDocDir;
   if (Platform.isAndroid) {
     appDocDir = await getExternalStorageDirectory();
   } else {
@@ -17,9 +18,9 @@ Future<AppDatabase> buildDataBase() async {
     appDocDir = await Directory("${Platform.environment['HOME']}/.config/food/")
         .create(recursive: true);
   }
-  var databasesPath = appDocDir.path;
-  var path = join(databasesPath, 'food2.db');
-
+  var databasesPath = appDocDir?.path;
+  var path = join(databasesPath!, 'food4.db');
+  print("db path ${path}");
   // create migration
   final migration1to2 = Migration(1, 2, (database) async {
     // await database.execute('DROP TABLE IF EXISTS Order;');
@@ -32,20 +33,31 @@ Future<AppDatabase> buildDataBase() async {
   return database;
 }
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  var db = await buildDataBase();
-  FoodMenu menu = await getFood();
-  runApp(MyApp(db, FoodValueNotifierData(menu)));
+Future<int> loadDefault(AppDatabase db) async{
+  List<Category> cats=await db.categoryDao.findAll();
+  if(cats.length<=0) {
+    print("init cat food data");
+    FoodMenu foodMenu = await getFood();
+    print("foodMenu.category $foodMenu.category");
+    db.categoryDao.adds(foodMenu.category);
+    db.itemDao.adds(foodMenu.list);
+    return Future.value(foodMenu.list.length);
+  }
+  return Future.value(0);
 }
 
-class MyApp extends StatelessWidget {
-  AppDatabase db;
-  FoodValueNotifierData menu;
-  MyApp(db, menu) {
-    this.db = db;
-    this.menu = menu;
-  }
+late AppDatabase appDb;
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  appDb = await buildDataBase();
+  int count=await loadDefault(appDb);
+  runApp(MyApp(appDb));
+}
+
+class MyApp extends StatelessWidget  {
+  late AppDatabase db;
+  MyApp(this.db);
 
   // This widget is the root of your application.
   @override
@@ -62,9 +74,7 @@ class MyApp extends StatelessWidget {
         // "language": (context) => LanguageRoute(),
       },
       home: MyHomePage(
-        title: '点餐',
-        db: db,
-        food: menu,
+         '点餐',db
       ),
     );
   }

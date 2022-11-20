@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:food/model/food.dart';
 
+import '../data/entity/item.dart';
 import 'food_list.dart';
 
 class FoodItem extends StatefulWidget {
   FoodItem(this.item, this.order);
   OrderValueNotifierData order;
-  OrderFood item;
+  Item item;
   @override
   State<StatefulWidget> createState() {
     return _FoodItemStae();
@@ -14,9 +15,7 @@ class FoodItem extends StatefulWidget {
 }
 
 class _FoodItemStae extends State<FoodItem> {
-  int count;
   Widget build(BuildContext context) {
-    count = widget.item.count;
     var item = widget.item;
     ThemeData themeData = Theme.of(context);
     // print('build item=>${item}');
@@ -90,8 +89,7 @@ class _FoodItemStae extends State<FoodItem> {
                                 icon: Icon(Icons.remove),
                                 onPressed: () {
                                   setState(() {
-                                    if (count >= 1) {
-                                      count--;
+                                    if (item.count >= 1) {
                                       item.count--;
                                       widget.order.notifyListeners();
                                     }
@@ -108,12 +106,11 @@ class _FoodItemStae extends State<FoodItem> {
                                 icon: Icon(Icons.add),
                                 onPressed: () {
                                   setState(() {
-                                    count++;
                                     item.count++;
                                     widget.order.notifyListeners();
                                   });
 
-                                  print('count ${item.count}');
+                                  print('add item ${item.title} ${item.count}');
                                 }),
                           ],
                         ),

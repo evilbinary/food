@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:food/model/food.dart';
 
+import '../data/entity/item.dart';
+import '../widget/food_list.dart';
+
 class FoodEditor extends StatefulWidget {
-  FoodEditor({Key key, this.foodWatcher}) : super(key: key);
+  FoodEditor({ key,required this.foodWatcher,required this.catWatcher}) : super(key: key);
   final FoodValueNotifierData foodWatcher;
+  final CatValueNotifierData catWatcher;
+
   @override
   State<FoodEditor> createState() => _FoodEditorState();
 }
@@ -12,7 +17,7 @@ class _FoodEditorState extends State<FoodEditor> {
   editFood(BuildContext context, Item food) async {
     TextEditingController _foodNameController = TextEditingController();
     TextEditingController _foodPriceController = TextEditingController();
-    int catId;
+    late int? catId;
     if (food != null) {
       _foodNameController.text = food.title;
       _foodPriceController.text = food.price.toString();
@@ -47,7 +52,7 @@ class _FoodEditorState extends State<FoodEditor> {
                   TextFormField(
                     controller: _foodPriceController,
                     validator: (value) {
-                      if (double.tryParse(value) == null) {
+                      if (double.tryParse(value!) == null) {
                         return '请输入合法的数字';
                       }
                       return null;
@@ -67,14 +72,14 @@ class _FoodEditorState extends State<FoodEditor> {
                         return null;
                       }),
                       value: widget.foodWatcher.findFoodCatID(food),
-                      items: widget.foodWatcher.value.category
+                      items: widget.catWatcher.value
                           .map((e) => DropdownMenuItem(
                                 child: Text(e.name),
                                 value: e.id,
                               ))
                           .toList(),
                       onChanged: (v) {
-                        catId = v;
+                        catId = v as int?;
                       })
                 ],
               ),
@@ -82,17 +87,17 @@ class _FoodEditorState extends State<FoodEditor> {
             actions: [
               TextButton(
                   onPressed: () {
-                    if (!formKey.currentState.validate()) {
-                      return;
-                    }
+                    // if ( !formKey.currentState?.validate) {
+                    //   return;
+                    // }
                     // 添加新菜
                     if (food == null || food.id == null) {
                       widget.foodWatcher.addFood(_foodNameController.text,
-                          catId, double.tryParse(_foodPriceController.text));
+                          catId!, double.tryParse(_foodPriceController.text)!);
                     } else {
                       // 更新菜品配置
-                      food.catId = catId;
-                      food.price = double.tryParse(_foodPriceController.text);
+                      food.catId = catId!;
+                      food.price = double.tryParse(_foodPriceController.text)!;
                       food.title = _foodNameController.text;
                       widget.foodWatcher.updateFood(food);
                     }
@@ -121,7 +126,7 @@ class _FoodEditorState extends State<FoodEditor> {
         actions: [
           IconButton(
               onPressed: () {
-                editFood(context, null);
+                editFood(context, Item('',0, 0.0));
               },
               icon: Icon(Icons.add))
         ],
@@ -132,8 +137,8 @@ class _FoodEditorState extends State<FoodEditor> {
         height: 35,
         child: TextButton(
             onPressed: () async {
-              saveFood(widget.foodWatcher.value);
-              widget.foodWatcher.value = await getFood();
+              widget.foodWatcher.saveAll();
+
               ScaffoldMessenger.of(context)
                   .showSnackBar(SnackBar(content: Text('保存成功')));
             },
@@ -147,8 +152,8 @@ class _FoodEditorState extends State<FoodEditor> {
 
   ListView createFoodViews() {
     List<ListTile> list = [];
-    for (var cat in widget.foodWatcher.value.category) {
-      for (var food in widget.foodWatcher.value.list) {
+    for (var cat in widget.catWatcher.value) {
+      for (var food in widget.foodWatcher.value) {
         if (food.catId == cat.id) {
           ListTile tile = ListTile(
               leading: CircleAvatar(child: Text(cat.name[0])),
@@ -159,7 +164,7 @@ class _FoodEditorState extends State<FoodEditor> {
               trailing: IconButton(
                 onPressed: () async {
                   setState(() {
-                    widget.foodWatcher.removeFood(food.id);
+                    widget.foodWatcher.removeFood(food.id!);
                   });
                 },
                 icon: Icon(Icons.delete),

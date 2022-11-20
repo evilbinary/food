@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:food/model/food.dart';
+import '../widget/food_list.dart';
 
 class CategoryEditor extends StatefulWidget {
-  const CategoryEditor({Key key, this.foodWatcher}) : super(key: key);
+  CategoryEditor(this.catWatcher);
 
-  final FoodValueNotifierData foodWatcher;
+  CatValueNotifierData catWatcher;
   @override
   State<CategoryEditor> createState() => _CategoryEditorState();
 }
@@ -91,10 +92,10 @@ class _CategoryEditorState extends State<CategoryEditor> {
         actions: <Widget>[
           IconButton(
               onPressed: () async {
-                String cat = await editCategory(context, null);
+                String cat = await editCategory(context, '');
                 if (cat.length > 0) {
                   setState(() {
-                    widget.foodWatcher.addCategory(cat);
+                    widget.catWatcher.addCategory(cat);
                   });
                 }
               },
@@ -102,7 +103,7 @@ class _CategoryEditorState extends State<CategoryEditor> {
         ],
       ),
       body: ListView(
-          children: widget.foodWatcher.value.category
+          children: widget.catWatcher.value
               .map((e) => ListTile(
                   leading: CircleAvatar(child: Text(e.name[0])),
                   title: Text(
@@ -113,7 +114,7 @@ class _CategoryEditorState extends State<CategoryEditor> {
                     String cat = await editCategory(context, e.name);
                     if (cat != null && cat.length > 0) {
                       setState(() {
-                        widget.foodWatcher.updateCategory(e.id, cat);
+                        widget.catWatcher.updateCategory(e.id!, cat);
                       });
                     }
                   },
@@ -121,7 +122,7 @@ class _CategoryEditorState extends State<CategoryEditor> {
                     onPressed: () async {
                       bool remove = await confirmRemoveCat(context, e.name);
                       if (remove) {
-                        widget.foodWatcher.removeCategory(e.id);
+                        widget.catWatcher.removeCategory(e.id);
                       }
                     },
                     icon: Icon(Icons.delete),
@@ -133,8 +134,7 @@ class _CategoryEditorState extends State<CategoryEditor> {
         height: 35,
         child: TextButton(
             onPressed: () async {
-              saveFood(widget.foodWatcher.value);
-              widget.foodWatcher.value = await getFood();
+              widget.catWatcher.saveAll();
               ScaffoldMessenger.of(context)
                   .showSnackBar(SnackBar(content: Text('保存成功')));
             },
